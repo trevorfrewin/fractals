@@ -19,20 +19,9 @@ namespace tfrewin.play.fractal.start
             new Program().PaintFile("JuliaSet", planeWidth, planeHeight, zoom, maximumIteration);
         }
 
-        private Dictionary<int, List<Tuple<int,int>>> GetMatrixForFormula(string formula, int planeWidth, int planeHeight, int zoom, int maximumIteration)
+        private Dictionary<int, List<Tuple<int,int>>> GetMatrixForFormula(string formulaName, int planeWidth, int planeHeight, int zoom, int maximumIteration)
         {
-            IFormulaProcesor formulaProcessor;
-
-            switch(formula)
-            {
-                case "JuliaSet" :
-                    formulaProcessor = new JuliaSetProcessor();
-                    break;
-                default:
-                    throw new ArgumentException(string.Format("Formula '{0}' is not supported."));
-            }
-
-            return formulaProcessor.Process(planeWidth, planeHeight, zoom, maximumIteration);
+            return new FormulaProcessorFactory().Create(formulaName).Process(planeWidth, planeHeight, zoom, maximumIteration);
         }
 
         public void PaintFile(string formula, int planeWidth, int planeHeight, int zoom, int maximumIteration)
