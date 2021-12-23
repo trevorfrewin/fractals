@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace tfrewin.play.fractal.start
+namespace tfrewin.play.fractal.start.processor.output
 {
     public class Matrix
     {

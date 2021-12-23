@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
+using Newtonsoft.Json;
+
 using tfrewin.play.fractal.start.processor;
+using tfrewin.play.fractal.start.processor.output;
 
 namespace tfrewin.play.fractal.start
 {
@@ -11,8 +15,8 @@ namespace tfrewin.play.fractal.start
     {
         static void Main(string[] args)
         {
-            int planeWidth = 400;
-            int planeHeight = 300;
+            int planeWidth = 1920;
+            int planeHeight = 1080;
             double zoom = 1;
             double iterationFactor = 1;
             int colourOffset = 0;
@@ -26,12 +30,12 @@ namespace tfrewin.play.fractal.start
 
             if (args.Any(a => a.ToLower().StartsWith("widthmultiplier=")))
             {
-                planeWidth *= int.Parse(args.First(a => a.ToLower().StartsWith("widthmultiplier=")).ToLower().Replace("widthmultiplier=", string.Empty));
+                planeWidth = (int)(planeWidth * double.Parse(args.First(a => a.ToLower().StartsWith("widthmultiplier=")).ToLower().Replace("widthmultiplier=", string.Empty)));
             }
 
             if (args.Any(a => a.ToLower().StartsWith("heightmultiplier=")))
             {
-                planeHeight *= int.Parse(args.First(a => a.ToLower().StartsWith("heightmultiplier=")).ToLower().Replace("heightmultiplier=", string.Empty));
+                planeHeight = (int)(planeHeight * double.Parse(args.First(a => a.ToLower().StartsWith("heightmultiplier=")).ToLower().Replace("heightmultiplier=", string.Empty)));
             }
 
             if (args.Any(a => a.ToLower().StartsWith("iterationfactor=")))
@@ -49,7 +53,7 @@ namespace tfrewin.play.fractal.start
                 colourOffset = int.Parse(args.First(a => a.ToLower().StartsWith("colouroffset=")).ToLower().Replace("colouroffset=", string.Empty));
             }
 
-            new Program().PaintFile(setName, planeWidth, planeHeight, zoom, iterationFactor, colourOffset);
+            new Program().PaintFile(new ImageParameters(setName, planeWidth, planeHeight, zoom, iterationFactor, colourOffset));
         }
 
         private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, double zoom, int maximumIteration)
@@ -57,17 +61,17 @@ namespace tfrewin.play.fractal.start
             return new FormulaProcessorFactory().Create(setName).Process(planeWidth, planeHeight, zoom, maximumIteration);
         }
 
-        public void PaintFile(string setName, int planeWidth, int planeHeight, double zoom, double iterationFactor, int colourOffset)
+        public void PaintFile(ImageParameters parameters)
         {
             var colours = this.GenerateColourWheel().ToArray();
 
-            Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), setName);
+            Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), parameters.SetName);
 
-            var matrix = this.GetMatrixForFormula(setName, planeWidth, planeHeight, zoom, (int)(colours.Length * iterationFactor));
+            var matrix = this.GetMatrixForFormula(parameters.SetName, parameters.PlaneWidth, parameters.PlaneHeight, parameters.Zoom, (int)(colours.Length * parameters.IterationFactor));
 
             Console.WriteLine("{0} Painting ...", DateTime.UtcNow.ToString("o"));
 
-            var bitmap = new Bitmap(planeWidth, planeHeight);
+            var bitmap = new Bitmap(parameters.PlaneWidth, parameters.PlaneHeight);
 
             foreach (var point in matrix.Points)
             {
@@ -75,7 +79,7 @@ namespace tfrewin.play.fractal.start
 
                 if (point.IterationCount > 0)
                 {
-                    colourPoint = (int)(point.IterationCount / iterationFactor) + colourOffset;
+                    colourPoint = (int)(point.IterationCount / parameters.IterationFactor) + parameters.ColourOffset;
 
                     while (colourPoint >= colours.Length)
                     {
@@ -86,9 +90,17 @@ namespace tfrewin.play.fractal.start
                 bitmap.SetPixel(point.XAxisValue, point.YAxisValue, colours[colourPoint]);
             }
 
-            var filename = string.Format("painted-{0}-{1}.output.png", setName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
-            Console.WriteLine(filename);
-            bitmap.Save(filename);
+            var filename = string.Format("{0}-{1}.output", parameters.SetName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
+            var imageFilename = string.Concat(filename, ".png");
+            Console.WriteLine("Saving {0} ...", imageFilename);
+            bitmap.Save(imageFilename);
+
+            var parametersFilename = string.Concat(filename, ".json");
+            Console.WriteLine("Saving {0} ...", parametersFilename);
+
+            parameters.ImageFilename = imageFilename;
+            var parametersContent = JsonConvert.SerializeObject(parameters, Formatting.Indented);
+            File.WriteAllText(parametersFilename, parametersContent);
         }
 
         public List<Color> GenerateColourWheel()

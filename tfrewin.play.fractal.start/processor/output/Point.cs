@@ -1,4 +1,4 @@
-namespace tfrewin.play.fractal.start
+namespace tfrewin.play.fractal.start.processor.output
 {
     public class Point
     {

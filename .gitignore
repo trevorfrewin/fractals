@@ -13,3 +13,4 @@
 ## Output files from execution
 ##
 **/*.output.png
+**/*.output.json
