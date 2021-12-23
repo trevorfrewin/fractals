@@ -9,16 +9,17 @@ using Newtonsoft.Json;
 
 using tfrewin.play.fractal.start.processor;
 using tfrewin.play.fractal.start.processor.output;
+using tfrewin.play.fractal.start.utilities;
 
 namespace tfrewin.play.fractal.start
 {
     class Program
     {
-        private List<Color> ColorWheel;
+        private List<List<Color>> ColorWheels;
 
         public Program()
         {
-            this.ColorWheel = this.GenerateColourWheel();
+            this.ColorWheels = new ColourWheelGenerator().GenerateColourWheels();
         }
 
         static void Main(string[] args)
@@ -85,7 +86,7 @@ namespace tfrewin.play.fractal.start
 
         public void PaintFile(ImageParameters parameters)
         {
-            var colours = this.ColorWheel.ToArray();
+            var colours = this.ColorWheels[0].ToArray();
 
             Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), parameters.SetName);
 
@@ -131,68 +132,6 @@ namespace tfrewin.play.fractal.start
             parameters.ImageFilename = imageFilename;
             var parametersContent = JsonConvert.SerializeObject(parameters, Formatting.Indented);
             File.WriteAllText(parametersFilename, parametersContent);
-        }
-
-/// TODO: Move this to a single call on construction
-        public List<Color> GenerateColourWheel()
-        {
-            var returnThis = new List<Color>();
-
-            // The range of RED
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(i, 0, 0));
-            }
-
-            // All RED AND The range of GREEN
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(255, i, 0));
-            }
-
-            // All GREEN and the reverse range of RED
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(255-i, 255, 0));
-            }
-
-            // All GREEN AND the range of BLUE
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(0, 255, i));
-            }
-
-            // All BLUE AND the reverse range of GREEN
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(0, 255-i, 255));
-            }
-
-            // All BLUE AND the range of RED
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(i, 0, 255));
-            }
-
-            // All GREEN AND All BLUE AND a range of RED
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(i, 255, 255));
-            }
-
-            // All RED AND All BLUE AND a range of GREEN
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(255, i, 255));
-            }
-
-            // All GREEN AND All RED AND a range of BLUE
-            for (int i = 0; i < 256; i++)
-            {
-                returnThis.Add(Color.FromArgb(255, 255, i));
-            }
-
-            return returnThis; // 9 * 255 = 2295
         }
     }
 }
