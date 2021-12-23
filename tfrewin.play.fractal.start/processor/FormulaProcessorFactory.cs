@@ -10,6 +10,8 @@ namespace tfrewin.play.fractal.start.processor
             {
                 case "JuliaSet" :
                     return new JuliaSetProcessor();
+                case "MandelbrotSet" :
+                    return new MandelbrotSetProcessor();
                 default:
                     throw new ArgumentException(string.Format("Formula '{0}' is not supported."));
             }
