@@ -24,8 +24,6 @@ namespace tfrewin.play.fractal.start
 
         static void Main(string[] args)
         {
-            // int planeWidth = 1920;
-            // int planeHeight = 1080;
             int planeWidth = 300;
             int planeHeight = 200;
             double zoom = 1;
