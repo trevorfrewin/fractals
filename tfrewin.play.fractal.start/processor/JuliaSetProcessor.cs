@@ -5,7 +5,7 @@ namespace tfrewin.play.fractal.start.processor
 {
     public class JuliaSetProcessor : IFormulaProcesor
     {
-        public Matrix Process(int planeWidth, int planeHeight, int zoom, int maximumIteration)
+        public Matrix Process(int planeWidth, int planeHeight, double zoom, int maximumIteration)
         {
             const int moveX = 0;
             const int moveY = 0;

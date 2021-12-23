@@ -13,8 +13,9 @@ namespace tfrewin.play.fractal.start
         {
             int planeWidth = 400;
             int planeHeight = 300;
-            int zoom = 1;
+            double zoom = 1;
             double iterationFactor = 1;
+            int colourOffset = 0;
 
             string setName = "mandelbrot";
 
@@ -38,15 +39,25 @@ namespace tfrewin.play.fractal.start
                 iterationFactor *= double.Parse(args.First(a => a.ToLower().StartsWith("iterationfactor=")).ToLower().Replace("iterationfactor=", string.Empty));
             }
 
-            new Program().PaintFile(setName, planeWidth, planeHeight, zoom, iterationFactor);
+            if (args.Any(a => a.ToLower().StartsWith("zoom=")))
+            {
+                zoom *= double.Parse(args.First(a => a.ToLower().StartsWith("zoom=")).ToLower().Replace("zoom=", string.Empty));
+            }
+
+            if (args.Any(a => a.ToLower().StartsWith("colouroffset=")))
+            {
+                colourOffset = int.Parse(args.First(a => a.ToLower().StartsWith("colouroffset=")).ToLower().Replace("colouroffset=", string.Empty));
+            }
+
+            new Program().PaintFile(setName, planeWidth, planeHeight, zoom, iterationFactor, colourOffset);
         }
 
-        private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, int zoom, int maximumIteration)
+        private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, double zoom, int maximumIteration)
         {
             return new FormulaProcessorFactory().Create(setName).Process(planeWidth, planeHeight, zoom, maximumIteration);
         }
 
-        public void PaintFile(string setName, int planeWidth, int planeHeight, int zoom, double iterationFactor)
+        public void PaintFile(string setName, int planeWidth, int planeHeight, double zoom, double iterationFactor, int colourOffset)
         {
             var colours = this.GenerateColourWheel().ToArray();
 
@@ -60,7 +71,18 @@ namespace tfrewin.play.fractal.start
 
             foreach (var point in matrix.Points)
             {
-                var colourPoint = (int)(point.IterationCount / iterationFactor);
+                int colourPoint = 0;
+
+                if (point.IterationCount > 0)
+                {
+                    colourPoint = (int)(point.IterationCount / iterationFactor) + colourOffset;
+
+                    while (colourPoint >= colours.Length)
+                    {
+                        colourPoint -= colours.Length;
+                    }
+                }
+
                 bitmap.SetPixel(point.XAxisValue, point.YAxisValue, colours[colourPoint]);
             }
 
@@ -109,7 +131,25 @@ namespace tfrewin.play.fractal.start
                 returnThis.Add(Color.FromArgb(i, 0, 255));
             }
 
-            return returnThis; // 6 x 255 = 1530 
+            // All GREEN AND All BLUE AND a range of RED
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(i, 255, 255));
+            }
+
+            // All RED AND All BLUE AND a range of GREEN
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(255, i, 255));
+            }
+
+            // All GREEN AND All RED AND a range of BLUE
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(255, 255, i));
+            }
+
+            return returnThis; // 9 * 255 = 2295
         }
     }
 }

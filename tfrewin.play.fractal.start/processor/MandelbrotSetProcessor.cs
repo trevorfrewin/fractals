@@ -51,11 +51,11 @@ namespace tfrewin.play.fractal.start.processor
                 return 0; // black
         }
 
-        public Matrix Process(int planeWidth, int planeHeight, int zoom, int maximumIteration)
+        public Matrix Process(int planeWidth, int planeHeight, double zoom, int maximumIteration)
         {
             var returnThis = new Matrix(maximumIteration);
 
-            var maxValueExtent = 2.0;
+            var maxValueExtent = 2.0 / zoom;
 
             double scale = 2 * maxValueExtent / Math.Min(planeWidth, planeHeight);
             for (int y = 0; y < planeHeight; y++)
