@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -11,17 +10,28 @@ namespace tfrewin.play.fractal.start
     {
         static void Main(string[] args)
         {
-            const int planeWidth = 400 * 16;
-            const int planeHeight = 300 * 16;
-            const int zoom = 1;
+            int planeWidth = 400;
+            int planeHeight = 300;
+            int zoom = 1;
 
-            if (args.Length > 0 && string.Equals(args[0].ToLower(), "j"))
+            string setName = "mandelbrot";
+
+            if (args.Any(a => a.ToLower().StartsWith("setname=")))
             {
-                new Program().PaintFile("JuliaSet", planeWidth, planeHeight, zoom);
-                return;
+                setName = args.First(a => a.ToLower().StartsWith("setname=")).ToLower().Replace("setname=", string.Empty);
             }
 
-            new Program().PaintFile("MandelbrotSet", planeWidth, planeHeight, zoom);
+            if (args.Any(a => a.ToLower().StartsWith("widthmultiplier=")))
+            {
+                planeWidth *= int.Parse(args.First(a => a.ToLower().StartsWith("widthmultiplier=")).ToLower().Replace("widthmultiplier=", string.Empty));
+            }
+
+            if (args.Any(a => a.ToLower().StartsWith("heightmultiplier=")))
+            {
+                planeHeight *= int.Parse(args.First(a => a.ToLower().StartsWith("heightmultiplier=")).ToLower().Replace("heightmultiplier=", string.Empty));
+            }
+
+            new Program().PaintFile(setName, planeWidth, planeHeight, zoom);
         }
 
         private Matrix GetMatrixForFormula(string formulaName, int planeWidth, int planeHeight, int zoom)
@@ -48,35 +58,6 @@ namespace tfrewin.play.fractal.start
             var filename = string.Format("painted-{0}-{1}.output.png", formulaName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
             Console.WriteLine(filename);
             bitmap.Save(filename);
-        }
-    }
-
-    public class Matrix
-    {
-        public int MaximumIterations { get; private set; }
-
-        public List<Point> Points { get; private set; }
-
-        public Matrix(int maximumIterations)
-        {
-            this.MaximumIterations = maximumIterations;
-            this.Points = new List<Point>();
-        }
-    }
-
-    public class Point
-    {
-        public int XAxisValue { get; private set; }
-
-        public int YAxisValue { get; private set; }
-
-        public int IterationCount { get; private set; }
-
-        public Point(int xAxisValue, int yAxisValue, int iterationCount)
-        {
-            this.XAxisValue = xAxisValue;
-            this.YAxisValue = yAxisValue;
-            this.IterationCount = iterationCount;
         }
     }
 }
