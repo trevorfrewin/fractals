@@ -51,9 +51,8 @@ namespace tfrewin.play.fractal.start.processor
                 return 0; // black
         }
 
-        public Matrix Process(int planeWidth, int planeHeight, int zoom)
+        public Matrix Process(int planeWidth, int planeHeight, int zoom, int maximumIteration)
         {
-            const int maximumIteration = 255;
             var returnThis = new Matrix(maximumIteration);
 
             var maxValueExtent = 2.0;
@@ -62,13 +61,12 @@ namespace tfrewin.play.fractal.start.processor
             for (int y = 0; y < planeHeight; y++)
             {
                 double yScale = (planeHeight / 2 - y) * scale;
-                for (int j = 0; j < planeWidth; j++)
+                for (int x = 0; x < planeWidth; x++)
                 {
-                    double x = (j - planeWidth / 2) * scale;
+                    double xScale = (x - planeWidth / 2) * scale;
 
-// here's a brilliant example of why we should never call variables 'i' and 'y' and rubbish meaningless stuff like that!                  
-                    var colour = CalcMandelbrotSetColor(new ComplexNumber(x, yScale), maxValueExtent, maximumIteration);
-                    returnThis.Points.Add(new Point(j, y, colour));
+                    var colour = CalcMandelbrotSetColor(new ComplexNumber(xScale, yScale), maxValueExtent, maximumIteration);
+                    returnThis.Points.Add(new Point(x, y, colour));
                 }
             }
 

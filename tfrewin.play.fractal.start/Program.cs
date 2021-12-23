@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -13,6 +14,7 @@ namespace tfrewin.play.fractal.start
             int planeWidth = 400;
             int planeHeight = 300;
             int zoom = 1;
+            double iterationFactor = 1;
 
             string setName = "mandelbrot";
 
@@ -31,33 +33,83 @@ namespace tfrewin.play.fractal.start
                 planeHeight *= int.Parse(args.First(a => a.ToLower().StartsWith("heightmultiplier=")).ToLower().Replace("heightmultiplier=", string.Empty));
             }
 
-            new Program().PaintFile(setName, planeWidth, planeHeight, zoom);
+            if (args.Any(a => a.ToLower().StartsWith("iterationfactor=")))
+            {
+                iterationFactor *= double.Parse(args.First(a => a.ToLower().StartsWith("iterationfactor=")).ToLower().Replace("iterationfactor=", string.Empty));
+            }
+
+            new Program().PaintFile(setName, planeWidth, planeHeight, zoom, iterationFactor);
         }
 
-        private Matrix GetMatrixForFormula(string formulaName, int planeWidth, int planeHeight, int zoom)
+        private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, int zoom, int maximumIteration)
         {
-            return new FormulaProcessorFactory().Create(formulaName).Process(planeWidth, planeHeight, zoom);
+            return new FormulaProcessorFactory().Create(setName).Process(planeWidth, planeHeight, zoom, maximumIteration);
         }
 
-        public void PaintFile(string formulaName, int planeWidth, int planeHeight, int zoom)
+        public void PaintFile(string setName, int planeWidth, int planeHeight, int zoom, double iterationFactor)
         {
-            Console.WriteLine("Processing for '{0}' ...", formulaName);
+            var colours = this.GenerateColourWheel().ToArray();
 
-            var matrix = this.GetMatrixForFormula(formulaName, planeWidth, planeHeight, zoom);
+            Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), setName);
 
-            Console.WriteLine("Painting ...");
-            var colors = (from c in Enumerable.Range(0, 256)
-                          select Color.FromArgb((c >> 5) * 36, (c >> 3 & 7) * 36, (c & 3) * 85)).ToArray();
+            var matrix = this.GetMatrixForFormula(setName, planeWidth, planeHeight, zoom, (int)(colours.Length * iterationFactor));
+
+            Console.WriteLine("{0} Painting ...", DateTime.UtcNow.ToString("o"));
+
             var bitmap = new Bitmap(planeWidth, planeHeight);
 
             foreach (var point in matrix.Points)
             {
-                bitmap.SetPixel(point.XAxisValue, point.YAxisValue, colors[point.IterationCount]);
+                var colourPoint = (int)(point.IterationCount / iterationFactor);
+                bitmap.SetPixel(point.XAxisValue, point.YAxisValue, colours[colourPoint]);
             }
 
-            var filename = string.Format("painted-{0}-{1}.output.png", formulaName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
+            var filename = string.Format("painted-{0}-{1}.output.png", setName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
             Console.WriteLine(filename);
             bitmap.Save(filename);
+        }
+
+        public List<Color> GenerateColourWheel()
+        {
+            var returnThis = new List<Color>();
+
+            // The range of RED
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(i, 0, 0));
+            }
+
+            // All RED AND The range of GREEN
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(255, i, 0));
+            }
+
+            // All GREEN and the reverse range of RED
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(255-i, 255, 0));
+            }
+
+            // All GREEN AND the range of BLUE
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(0, 255, i));
+            }
+
+            // All BLUE AND the reverse range of GREEN
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(0, 255-i, 255));
+            }
+
+            // All BLUE AND the range of RED
+            for (int i = 0; i < 256; i++)
+            {
+                returnThis.Add(Color.FromArgb(i, 0, 255));
+            }
+
+            return returnThis; // 6 x 255 = 1530 
         }
     }
 }
