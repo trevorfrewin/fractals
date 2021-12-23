@@ -4,6 +4,6 @@ namespace tfrewin.play.fractal.start.processor
 {
     public interface IFormulaProcesor
     {
-        Matrix Process(int planeWidth, int planeHeight, double zoom, int maximumIteration);
+        Matrix Process(int planeWidth, int planeHeight, double zoom, double moveX, double moveY, int maximumIteration);
     }
 }

@@ -52,13 +52,14 @@ namespace tfrewin.play.fractal.start.processor
                 return 0; // black
         }
 
-        public Matrix Process(int planeWidth, int planeHeight, double zoom, int maximumIteration)
+        public Matrix Process(int planeWidth, int planeHeight, double zoom, double moveX, double moveY, int maximumIteration)
         {
             var returnThis = new Matrix(maximumIteration);
 
-            var maxValueExtent = 2.0 / zoom;
+            var maxValueExtent = 2.0;
 
             double scale = 2 * maxValueExtent / Math.Min(planeWidth, planeHeight);
+            scale /= zoom;
             for (int y = 0; y < planeHeight; y++)
             {
                 double yScale = (planeHeight / 2 - y) * scale;
@@ -66,7 +67,7 @@ namespace tfrewin.play.fractal.start.processor
                 {
                     double xScale = (x - planeWidth / 2) * scale;
 
-                    var colour = CalcMandelbrotSetColor(new ComplexNumber(xScale, yScale), maxValueExtent, maximumIteration);
+                    var colour = CalcMandelbrotSetColor(new ComplexNumber(xScale + moveX, yScale + moveY), maxValueExtent, maximumIteration);
                     returnThis.Points.Add(new Point(x, y, colour));
                 }
             }

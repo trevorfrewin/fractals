@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,11 +14,22 @@ namespace tfrewin.play.fractal.start
 {
     class Program
     {
+        private List<Color> ColorWheel;
+
+        public Program()
+        {
+            this.ColorWheel = this.GenerateColourWheel();
+        }
+
         static void Main(string[] args)
         {
-            int planeWidth = 1920;
-            int planeHeight = 1080;
+            // int planeWidth = 1920;
+            // int planeHeight = 1080;
+            int planeWidth = 300;
+            int planeHeight = 200;
             double zoom = 1;
+            double moveX = 0;
+            double moveY = 0;
             double iterationFactor = 1;
             int colourOffset = 0;
 
@@ -53,24 +65,40 @@ namespace tfrewin.play.fractal.start
                 colourOffset = int.Parse(args.First(a => a.ToLower().StartsWith("colouroffset=")).ToLower().Replace("colouroffset=", string.Empty));
             }
 
-            new Program().PaintFile(new ImageParameters(setName, planeWidth, planeHeight, zoom, iterationFactor, colourOffset));
+            if (args.Any(a => a.ToLower().StartsWith("movex=")))
+            {
+                moveX = double.Parse(args.First(a => a.ToLower().StartsWith("movex=")).ToLower().Replace("movex=", string.Empty));
+            }
+
+            if (args.Any(a => a.ToLower().StartsWith("movey=")))
+            {
+                moveY = double.Parse(args.First(a => a.ToLower().StartsWith("movey=")).ToLower().Replace("movey=", string.Empty));
+            }
+
+            new Program().PaintFile(new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourOffset));
         }
 
-        private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, double zoom, int maximumIteration)
+        private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, int maximumIteration)
         {
-            return new FormulaProcessorFactory().Create(setName).Process(planeWidth, planeHeight, zoom, maximumIteration);
+            return new FormulaProcessorFactory().Create(setName).Process(planeWidth, planeHeight, zoom, moveX, moveY, maximumIteration);
         }
 
         public void PaintFile(ImageParameters parameters)
         {
-            var colours = this.GenerateColourWheel().ToArray();
+            var colours = this.ColorWheel.ToArray();
 
             Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), parameters.SetName);
 
-            var matrix = this.GetMatrixForFormula(parameters.SetName, parameters.PlaneWidth, parameters.PlaneHeight, parameters.Zoom, (int)(colours.Length * parameters.IterationFactor));
+            var processingStopWatch = new Stopwatch();
+            processingStopWatch.Start();
+            var matrix = this.GetMatrixForFormula(parameters.SetName, parameters.PlaneWidth, parameters.PlaneHeight, parameters.Zoom, parameters.MoveX, parameters.MoveY, (int)(colours.Length * parameters.IterationFactor));
+            processingStopWatch.Stop();
+            parameters.ProcessingMilliseconds = processingStopWatch.ElapsedMilliseconds;
 
             Console.WriteLine("{0} Painting ...", DateTime.UtcNow.ToString("o"));
 
+            var paintingStopWatch = new Stopwatch();
+            paintingStopWatch.Start();
             var bitmap = new Bitmap(parameters.PlaneWidth, parameters.PlaneHeight);
 
             foreach (var point in matrix.Points)
@@ -89,6 +117,8 @@ namespace tfrewin.play.fractal.start
 
                 bitmap.SetPixel(point.XAxisValue, point.YAxisValue, colours[colourPoint]);
             }
+            paintingStopWatch.Stop();
+            parameters.PaintMilliseconds = paintingStopWatch.ElapsedMilliseconds;
 
             var filename = string.Format("{0}-{1}.output", parameters.SetName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
             var imageFilename = string.Concat(filename, ".png");
@@ -103,6 +133,7 @@ namespace tfrewin.play.fractal.start
             File.WriteAllText(parametersFilename, parametersContent);
         }
 
+/// TODO: Move this to a single call on construction
         public List<Color> GenerateColourWheel()
         {
             var returnThis = new List<Color>();

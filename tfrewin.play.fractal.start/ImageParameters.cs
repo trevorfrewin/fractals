@@ -1,8 +1,14 @@
+using System;
+
 namespace tfrewin.play.fractal.start
 {
     public class ImageParameters
     {
-        // string setName, int planeWidth, int planeHeight, double zoom, double iterationFactor, int colourOffset
+        public DateTime StartTime { get; private set; }
+
+        public long ProcessingMilliseconds { get; set; }
+
+        public long PaintMilliseconds { get; set; }
 
         public string SetName { get; private set; }
 
@@ -12,18 +18,25 @@ namespace tfrewin.play.fractal.start
 
         public double Zoom { get; private set; }
 
+        public double MoveX { get; private set; }
+
+        public double MoveY { get; private set; }
+
         public double IterationFactor { get; private set; }
 
         public int ColourOffset { get; private set; }
 
         public string ImageFilename { get; set; }
 
-        public ImageParameters(string setName, int planeWidth, int planeHeight, double zoom, double iterationFactor, int colourOffset)
+        public ImageParameters(DateTime startTime, string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, double iterationFactor, int colourOffset)
         {
+            this.StartTime = startTime;
             this.SetName = setName;
             this.PlaneWidth = planeWidth;
             this.PlaneHeight = planeHeight;
             this.Zoom = zoom;
+            this.MoveX = moveX;
+            this.MoveY = moveY;
             this.IterationFactor = iterationFactor;
             this.ColourOffset = colourOffset;
         }
