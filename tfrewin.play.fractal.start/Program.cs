@@ -15,7 +15,7 @@ namespace tfrewin.play.fractal.start
 {
     class Program
     {
-        private List<List<Color>> ColorWheels;
+        private List<ColourWheel> ColorWheels;
 
         public Program()
         {
@@ -31,6 +31,7 @@ namespace tfrewin.play.fractal.start
             double moveY = 0;
             double iterationFactor = 1;
             int colourOffset = 0;
+            string colourWheelName = "First";
 
             string setName = "mandelbrot";
 
@@ -64,6 +65,11 @@ namespace tfrewin.play.fractal.start
                 colourOffset = int.Parse(args.First(a => a.ToLower().StartsWith("colouroffset=")).ToLower().Replace("colouroffset=", string.Empty));
             }
 
+            if (args.Any(a => a.ToLower().StartsWith("colourwheelname=")))
+            {
+                colourWheelName = args.First(a => a.ToLower().StartsWith("colourwheelname=")).ToLower().Replace("colourwheelname=", string.Empty);
+            }
+
             if (args.Any(a => a.ToLower().StartsWith("movex=")))
             {
                 moveX = double.Parse(args.First(a => a.ToLower().StartsWith("movex=")).ToLower().Replace("movex=", string.Empty));
@@ -74,7 +80,7 @@ namespace tfrewin.play.fractal.start
                 moveY = double.Parse(args.First(a => a.ToLower().StartsWith("movey=")).ToLower().Replace("movey=", string.Empty));
             }
 
-            new Program().PaintFile(new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourOffset));
+            new Program().PaintFile(new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourWheelName, colourOffset));
         }
 
         private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, int maximumIteration)
@@ -84,7 +90,7 @@ namespace tfrewin.play.fractal.start
 
         public void PaintFile(ImageParameters parameters)
         {
-            var colours = this.ColorWheels[0].ToArray();
+            var colours = this.ColorWheels.Where(cw => cw.ColourWheelName.Equals(parameters.ColourWheelName)).FirstOrDefault().Colours.ToArray();
 
             Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), parameters.SetName);
 

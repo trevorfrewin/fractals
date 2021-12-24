@@ -24,11 +24,13 @@ namespace tfrewin.play.fractal.start
 
         public double IterationFactor { get; private set; }
 
+        public string ColourWheelName { get; private set; }
+
         public int ColourOffset { get; private set; }
 
         public string ImageFilename { get; set; }
 
-        public ImageParameters(DateTime startTime, string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, double iterationFactor, int colourOffset)
+        public ImageParameters(DateTime startTime, string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, double iterationFactor, string colourWheelName, int colourOffset)
         {
             this.StartTime = startTime;
             this.SetName = setName;
@@ -38,6 +40,7 @@ namespace tfrewin.play.fractal.start
             this.MoveX = moveX;
             this.MoveY = moveY;
             this.IterationFactor = iterationFactor;
+            this.ColourWheelName = colourWheelName;
             this.ColourOffset = colourOffset;
         }
     }
