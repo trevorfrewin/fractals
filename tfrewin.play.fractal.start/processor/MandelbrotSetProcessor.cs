@@ -1,5 +1,5 @@
 using System;
-
+using System.Threading.Tasks;
 using tfrewin.play.fractal.start.processor.output;
 
 namespace tfrewin.play.fractal.start.processor
@@ -8,24 +8,24 @@ namespace tfrewin.play.fractal.start.processor
     {
         public double Re;
         public double Im;
-    
+
         public ComplexNumber(double re, double im)
         {
             this.Re = re;
             this.Im = im;
         }
-    
+
         public static ComplexNumber operator +(ComplexNumber x, ComplexNumber y)
         {
             return new ComplexNumber(x.Re + y.Re, x.Im + y.Im);
         }
-    
+
         public static ComplexNumber operator *(ComplexNumber x, ComplexNumber y)
         {
             return new ComplexNumber(x.Re * y.Re - x.Im * y.Im,
                 x.Re * y.Im + x.Im * y.Re);
         }
-    
+
         public double Norm()
         {
             return Re * Re + Im * Im;
@@ -34,11 +34,11 @@ namespace tfrewin.play.fractal.start.processor
 
     public class MandelbrotSetProcessor : IFormulaProcesor
     {
-        private int CalcMandelbrotSetColor(ComplexNumber c, double maxValueExtent, int maximumIteration)
+        private static int CalcMandelbrotSetColor(ComplexNumber c, double maxValueExtent, int maximumIteration)
         {
             // from http://en.wikipedia.org/w/index.php?title=Mandelbrot_set
             double MaxNorm = maxValueExtent * maxValueExtent;
-    
+
             int iteration = 0;
             ComplexNumber z = new ComplexNumber();
             do
@@ -60,17 +60,19 @@ namespace tfrewin.play.fractal.start.processor
 
             double scale = 2 * maxValueExtent / Math.Min(planeWidth, planeHeight);
             scale /= zoom;
-            for (int y = 0; y < planeHeight; y++)
-            {
-                double yScale = (planeHeight / 2 - y) * scale;
-                for (int x = 0; x < planeWidth; x++)
-                {
-                    double xScale = (x - planeWidth / 2) * scale;
 
-                    var colour = CalcMandelbrotSetColor(new ComplexNumber(xScale + moveX, yScale + moveY), maxValueExtent, maximumIteration);
-                    returnThis.Points.Add(new Point(x, y, colour));
-                }
-            }
+            Parallel.For(0, planeHeight, (y) => {
+                double yScale = (planeHeight / 2 - y) * scale;
+
+                Parallel.For(0, planeWidth, (x) =>
+                                {
+                                    double xScale = (x - planeWidth / 2) * scale;
+
+                                    var colour = CalcMandelbrotSetColor(new ComplexNumber(xScale + moveX, yScale + moveY), maxValueExtent, maximumIteration);
+
+                                    returnThis.Add(new Point(x, y, colour));
+                                });
+            });
 
             return returnThis;
         }

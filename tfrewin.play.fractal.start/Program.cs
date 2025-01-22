@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -11,6 +10,13 @@ using SixLabors.ImageSharp.PixelFormats;
 using tfrewin.play.fractal.start.processor;
 using tfrewin.play.fractal.start.processor.output;
 using tfrewin.play.fractal.start.utilities;
+
+/*
+ Some sample commands:
+ dotnet tfrewin.play.fractal.start.dll colourOffset=10 zoom=12000 moveX=-1.240128 moveY=0.12258 colourWheelName=First widthmultiplier=2 heightmultiplier=2
+ dotnet tfrewin.play.fractal.start.dll colourOffset=10 zoom=12000 moveX=-1.240128 moveY=0.12258 colourWheelName=First widthmultiplier=16 heightmultiplier=16
+
+ */
 
 namespace tfrewin.play.fractal.start
 {
@@ -108,7 +114,7 @@ namespace tfrewin.play.fractal.start
 
             using (Image<Rgba32> image = new(parameters.PlaneWidth, parameters.PlaneHeight))
             {
-                foreach (var point in matrix.Points)
+                foreach (var point in matrix)
                 {
                     int colourPoint = 0;
 
@@ -128,14 +134,19 @@ namespace tfrewin.play.fractal.start
                 parameters.PaintMilliseconds = paintingStopWatch.ElapsedMilliseconds;
 
                 var filename = string.Format("{0}-{1}.output", parameters.SetName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
-                var imageFilename = string.Concat(filename, ".png");
-                Console.WriteLine("Saving {0} ...", imageFilename);
-                image.SaveAsPng(imageFilename);
+                var imagePNGFilename = string.Concat(filename, ".png");
+                Console.WriteLine("Saving PNG '{0}' ...", imagePNGFilename);
+                image.SaveAsPng(imagePNGFilename);
+                parameters.ImageFilenames.Add(imagePNGFilename);
+
+                var imageJPGFilename = string.Concat(filename, ".jpg");
+                Console.WriteLine("Saving JPG '{0}' ...", imageJPGFilename);
+                image.SaveAsJpeg(imageJPGFilename);
+                parameters.ImageFilenames.Add(imageJPGFilename);
 
                 var parametersFilename = string.Concat(filename, ".json");
-                Console.WriteLine("Saving {0} ...", parametersFilename);
+                Console.WriteLine("Saving Paramaters '{0}' ...", parametersFilename);
 
-                parameters.ImageFilename = imageFilename;
                 var parametersContent = JsonConvert.SerializeObject(parameters, Formatting.Indented);
                 File.WriteAllText(parametersFilename, parametersContent);
             }
