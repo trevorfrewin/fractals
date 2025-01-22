@@ -6,7 +6,8 @@ using System.IO;
 using System.Linq;
 
 using Newtonsoft.Json;
-
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using tfrewin.play.fractal.start.processor;
 using tfrewin.play.fractal.start.processor.output;
 using tfrewin.play.fractal.start.utilities;
@@ -104,38 +105,40 @@ namespace tfrewin.play.fractal.start
 
             var paintingStopWatch = new Stopwatch();
             paintingStopWatch.Start();
-            var bitmap = new Bitmap(parameters.PlaneWidth, parameters.PlaneHeight);
 
-            foreach (var point in matrix.Points)
+            using (Image<Rgba32> image = new(parameters.PlaneWidth, parameters.PlaneHeight))
             {
-                int colourPoint = 0;
-
-                if (point.IterationCount > 0)
+                foreach (var point in matrix.Points)
                 {
-                    colourPoint = (int)(point.IterationCount / parameters.IterationFactor) + parameters.ColourOffset;
+                    int colourPoint = 0;
 
-                    while (colourPoint >= colours.Length)
+                    if (point.IterationCount > 0)
                     {
-                        colourPoint -= colours.Length;
+                        colourPoint = (int)(point.IterationCount / parameters.IterationFactor) + parameters.ColourOffset;
+
+                        while (colourPoint >= colours.Length)
+                        {
+                            colourPoint -= colours.Length;
+                        }
                     }
+
+                    image[point.XAxisValue, point.YAxisValue] = colours[colourPoint];
                 }
+                paintingStopWatch.Stop();
+                parameters.PaintMilliseconds = paintingStopWatch.ElapsedMilliseconds;
 
-                bitmap.SetPixel(point.XAxisValue, point.YAxisValue, colours[colourPoint]);
+                var filename = string.Format("{0}-{1}.output", parameters.SetName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
+                var imageFilename = string.Concat(filename, ".png");
+                Console.WriteLine("Saving {0} ...", imageFilename);
+                image.SaveAsPng(imageFilename);
+
+                var parametersFilename = string.Concat(filename, ".json");
+                Console.WriteLine("Saving {0} ...", parametersFilename);
+
+                parameters.ImageFilename = imageFilename;
+                var parametersContent = JsonConvert.SerializeObject(parameters, Formatting.Indented);
+                File.WriteAllText(parametersFilename, parametersContent);
             }
-            paintingStopWatch.Stop();
-            parameters.PaintMilliseconds = paintingStopWatch.ElapsedMilliseconds;
-
-            var filename = string.Format("{0}-{1}.output", parameters.SetName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
-            var imageFilename = string.Concat(filename, ".png");
-            Console.WriteLine("Saving {0} ...", imageFilename);
-            bitmap.Save(imageFilename);
-
-            var parametersFilename = string.Concat(filename, ".json");
-            Console.WriteLine("Saving {0} ...", parametersFilename);
-
-            parameters.ImageFilename = imageFilename;
-            var parametersContent = JsonConvert.SerializeObject(parameters, Formatting.Indented);
-            File.WriteAllText(parametersFilename, parametersContent);
         }
     }
 }
