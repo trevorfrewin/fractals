@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace tfrewin.play.fractal.start.processor.output
 {
@@ -7,9 +6,12 @@ namespace tfrewin.play.fractal.start.processor.output
     {
         public int MaximumIterations { get; private set; }
 
+        public MatrixExtents MatrixExtents { get; private set; }
+
         public Matrix(int maximumIterations)
         {
             this.MaximumIterations = maximumIterations;
+            this.MatrixExtents = new MatrixExtents();
         }
     }
 }

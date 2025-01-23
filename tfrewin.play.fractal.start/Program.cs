@@ -102,7 +102,7 @@ namespace tfrewin.play.fractal.start
         {
             const float TextPadding = 6f;
             const string TextFont = "Arial";
-            const float TextFontSize = 18f;
+            const float TextFontSize = 12f;
 
             if (!SystemFonts.TryGet(TextFont, out FontFamily fontFamily))
                 throw new Exception($"Couldn't find font {TextFont}");
@@ -182,6 +182,7 @@ namespace tfrewin.play.fractal.start
             var matrix = this.GetMatrixForFormula(parameters.SetName, parameters.PlaneWidth, parameters.PlaneHeight, parameters.Zoom, parameters.MoveX, parameters.MoveY, (int)(colours.Length * parameters.IterationFactor));
             processingStopWatch.Stop();
             parameters.ProcessingMilliseconds = processingStopWatch.ElapsedMilliseconds;
+            parameters.MatrixExtents = matrix.MatrixExtents;
 
             Console.WriteLine("{0} Painting ...", DateTime.UtcNow.ToString("o"));
 

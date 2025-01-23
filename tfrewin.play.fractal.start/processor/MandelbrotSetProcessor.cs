@@ -68,6 +68,51 @@ namespace tfrewin.play.fractal.start.processor
                                 {
                                     double xScale = (x - planeWidth / 2) * scale;
 
+                                    if (y == 0 && x == 0)
+                                    {
+                                        returnThis.MatrixExtents.TopLeftExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
+                                    if (y == 0 && x == planeWidth / 2)
+                                    {
+                                        returnThis.MatrixExtents.TopMiddleExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
+                                    if (y == 0 && x == planeWidth - 1)
+                                    {
+                                        returnThis.MatrixExtents.TopRightExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
+                                    if (y == planeHeight / 2 && x == 0)
+                                    {
+                                        returnThis.MatrixExtents.MiddleLeftExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
+                                    if (y == planeHeight / 2 && x == planeWidth / 2)
+                                    {
+                                        returnThis.MatrixExtents.MiddleMiddleExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
+                                    if (y == planeHeight / 2 && x == planeWidth - 1)
+                                    {
+                                        returnThis.MatrixExtents.MiddleRightExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
+                                    if (y == planeHeight - 1 && x == 0)
+                                    {
+                                        returnThis.MatrixExtents.BottomLeftExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
+                                    if (y == planeHeight - 1 && x == planeWidth / 2)
+                                    {
+                                        returnThis.MatrixExtents.BottomMiddleExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
+                                    if (y == planeHeight - 1 && x == planeWidth - 1)
+                                    {
+                                        returnThis.MatrixExtents.BottomRightExtent = new Tuple<double, double>(xScale + moveX, yScale + moveY);
+                                    }
+
                                     var colour = CalcMandelbrotSetColor(new ComplexNumber(xScale + moveX, yScale + moveY), maxValueExtent, maximumIteration);
 
                                     returnThis.Add(new Point(x, y, colour));

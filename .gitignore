@@ -12,5 +12,7 @@
 ##
 ## Output files from execution
 ##
-**/*.output.png
-**/*.output.json
+*.output.png
+*.output.json
+*.output.jpg
+*.annotated.*
