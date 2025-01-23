@@ -38,7 +38,7 @@ namespace tfrewin.play.fractal.start
             double moveY = 0;
             double iterationFactor = 1;
             int colourOffset = 0;
-            string colourWheelName = "First";
+            string colourWheelName = "Generated";
 
             string setName = "mandelbrot";
 

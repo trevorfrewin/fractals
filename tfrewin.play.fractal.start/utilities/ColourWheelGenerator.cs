@@ -7,85 +7,6 @@ namespace tfrewin.play.fractal.start.utilities
 {
     public class ColourWheelGenerator
     {
-        private List<List<Rgba32>> GenerateColourSpokes(Int32 intensity)
-        {
-            var returnThis = new List<List<Rgba32>>();
-
-            // The range of RED
-            var currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(i, 0, 0, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            // RED and the range of GREEN
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(255, i, 0, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            // GREEN and the reverse range of RED
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(255 - i, 255, 0, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            // GREEN and the range of BLUE
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(0, 255, i, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            // BLUE and the reverse range of GREEN
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(0, 255 - i, 255, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            // BLUE and the range of RED
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(i, 0, 255, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            // All GREEN AND All BLUE AND a range of RED
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(i, 255, 255, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            // All RED AND All BLUE AND a range of GREEN
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(255, i, 255, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            // All GREEN AND All RED AND a range of BLUE
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(255, 255, i, intensity));
-            }
-            returnThis.Add(currentSet);
-
-            return returnThis;
-        }
-
         private static Rgba32 HsvToRgba(float h, float s, float v, float a)
         {
             float c = v * s;
@@ -103,23 +24,16 @@ namespace tfrewin.play.fractal.start.utilities
             return new Rgba32(r + m, g + m, b + m, a);
         }
 
-        private List<Rgba32> GenerateColourRangeGradient()
+        private List<Rgba32> GenerateColourRangeGradient(int numberOfColours, float startAngle)
         {
-            int numColours = 2400;
             List<Rgba32> colourWheel = [];
             colourWheel.Add(new Rgba32()); // Add [JPG:Black]/[PNG:Transparent] as the first colour (used when the rule breaks in the Fractal)
 
-            for (int i = 0; i < numColours; i++)
+            for (int i = 0; i < numberOfColours; i++)
             {
-                float hue = (i / (float)numColours) * 360.0f; // Scale to 360-degree hue range
+                float hue = ((i / (float)numberOfColours) * 360.0f + startAngle) % 360.0f;
                 Rgba32 color = HsvToRgba(hue, 1.0f, 1.0f, 1.0f); // Full saturation, value, and alpha
                 colourWheel.Add(color);
-            }
-
-            // Output first 10 colors for validation
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine($"Color {i}: {colourWheel[i]}");
             }
 
             return colourWheel;
@@ -127,33 +41,29 @@ namespace tfrewin.play.fractal.start.utilities
 
         public List<ColourWheel> GenerateColourWheels()
         {
-            var colourSpokesNormal = GenerateColourSpokes(255);
-            var colourWheelFirst = new List<Rgba32>();
-            foreach (var colourSpoke in colourSpokesNormal)
-            {
-                colourWheelFirst.AddRange(colourSpoke);
-            }
+            var colourGradientVeryNarrow = 150;
+            var colourGradientNarrow = 300;
+            var colourGradientNormal = 1500;
+            var colourGradientWide = 3000;
+            var colourGradientVeryWide = 15000;
 
-            var colourSpokesDark = GenerateColourSpokes(50);
-            var colourWheelDark = new List<Rgba32>();
-            foreach (var colourSpoke in colourSpokesDark)
-            {
-                colourWheelDark.AddRange(colourSpoke);
-            }
+            var colourWheelBase = GenerateColourRangeGradient(colourGradientNormal, 0);
 
-            var colourWheelGenerated = GenerateColourRangeGradient();
             var colourWheelRandom = new List<Rgba32>();
-            foreach (var colourSpoke in colourSpokesNormal.OrderBy(cs => Guid.NewGuid()).ToList())
+            foreach (var colourSpoke in colourWheelBase.OrderBy(cs => Guid.NewGuid()).ToList())
             {
-                colourWheelRandom.AddRange(colourSpoke);
+                colourWheelRandom.Add(colourSpoke);
             }
 
             var returnThis = new List<ColourWheel>
             {
-                new("first", colourWheelFirst),
-                new("dark", colourWheelDark),
-                new("generated", colourWheelGenerated),
-                new("random", colourWheelRandom)
+                new("generated", colourWheelBase),
+                new("random", colourWheelRandom),
+                new("ninety-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 90)),
+                new("ninety-narrow", GenerateColourRangeGradient(colourGradientNarrow, 90)),
+                new("ninety", GenerateColourRangeGradient(colourGradientNormal, 90)),
+                new("ninety-wide", GenerateColourRangeGradient(colourGradientWide, 90)),
+                new("ninety-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 90))
             };
             return returnThis;
         }
