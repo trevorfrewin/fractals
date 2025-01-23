@@ -100,10 +100,24 @@ namespace tfrewin.play.fractal.start
 
         private void AnnotateImage(Image original, string annotations)
         {
-            var penWidth = original.Width < 1001 ? 1 : 3;
-            var blackPen = Pens.Solid(Color.Black, penWidth); // Thin black grid lines
+            const float TextPadding = 6f;
+            const string TextFont = "Arial";
+            const float TextFontSize = 18f;
 
-            // Draw vertical lines
+            if (!SystemFonts.TryGet(TextFont, out FontFamily fontFamily))
+                throw new Exception($"Couldn't find font {TextFont}");
+
+            var font = fontFamily.CreateFont(TextFontSize, FontStyle.Regular);
+
+            var options = new TextOptions(font)
+            {
+                Dpi = 72,
+                KerningMode = KerningMode.None
+            };
+
+            var penWidth = original.Width < 1001 ? 1 : 3;
+            var blackPen = Pens.Solid(Color.Black, penWidth);
+
             var verticalSpacing = original.Width / 10;
             var horizontalSpacing = original.Height / 10;
 
@@ -119,21 +133,6 @@ namespace tfrewin.play.fractal.start
                     ctx.DrawLine(blackPen, new PointF(0, y), new PointF(original.Width, y));
                 }
             });
-
-            const float TextPadding = 6f;
-            const string TextFont = "Arial";
-            const float TextFontSize = 18f;
-
-            if (!SystemFonts.TryGet(TextFont, out FontFamily fontFamily))
-                throw new Exception($"Couldn't find font {TextFont}");
-
-            var font = fontFamily.CreateFont(TextFontSize, FontStyle.Regular);
-
-            var options = new TextOptions(font)
-            {
-                Dpi = 72,
-                KerningMode = KerningMode.None
-            };
 
             var rect = TextMeasurer.MeasureSize(annotations, options);
 
