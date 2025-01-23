@@ -28,7 +28,7 @@ namespace tfrewin.play.fractal.start.processor
                         i -= 1;
                     }
 
-                    returnThis.Points.Add(new Point(x, y, i));
+                    returnThis.Add(new Point(x, y, i));
                 }
             }
 

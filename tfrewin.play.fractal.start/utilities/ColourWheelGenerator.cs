@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -8,105 +7,63 @@ namespace tfrewin.play.fractal.start.utilities
 {
     public class ColourWheelGenerator
     {
-        private List<List<Rgba32>> GenerateColourSpokes()
+        private static Rgba32 HsvToRgba(float h, float s, float v, float a)
         {
-            var returnThis = new List<List<Rgba32>>();
-            
-            // The range of RED
-            var currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(i, 0, 0, 127));
-            }
-            returnThis.Add(currentSet);
+            float c = v * s;
+            float x = c * (1 - Math.Abs((h / 60) % 2 - 1));
+            float m = v - c;
 
-            // RED and the range of GREEN
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(255, i, 0, 127));
-            }
-            returnThis.Add(currentSet);
+            float r, g, b;
+            if (h < 60) { r = c; g = x; b = 0; }
+            else if (h < 120) { r = x; g = c; b = 0; }
+            else if (h < 180) { r = 0; g = c; b = x; }
+            else if (h < 240) { r = 0; g = x; b = c; }
+            else if (h < 300) { r = x; g = 0; b = c; }
+            else { r = c; g = 0; b = x; }
 
-            // GREEN and the reverse range of RED
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(255-i, 255, 0, 127));
-            }
-            returnThis.Add(currentSet);
+            return new Rgba32(r + m, g + m, b + m, a);
+        }
 
-            // GREEN and the range of BLUE
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(0, 255, i, 127));
-            }
-            returnThis.Add(currentSet);
+        private List<Rgba32> GenerateColourRangeGradient(int numberOfColours, float startAngle)
+        {
+            List<Rgba32> colourWheel = [];
+            colourWheel.Add(new Rgba32()); // Add [JPG:Black]/[PNG:Transparent] as the first colour (used when the rule breaks in the Fractal)
 
-            // BLUE and the reverse range of GREEN
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
+            for (int i = 0; i < numberOfColours; i++)
             {
-                currentSet.Add(new Rgba32(0, 255-i, 255, 127));
+                float hue = ((i / (float)numberOfColours) * 360.0f + startAngle) % 360.0f;
+                Rgba32 color = HsvToRgba(hue, 1.0f, 1.0f, 1.0f); // Full saturation, value, and alpha
+                colourWheel.Add(color);
             }
-            returnThis.Add(currentSet);
 
-            // BLUE and the range of RED
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(i, 0, 255, 127));
-            }
-            returnThis.Add(currentSet);
-
-            // All GREEN AND All BLUE AND a range of RED
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(i, 255, 255, 127));
-            }
-            returnThis.Add(currentSet);
-
-            // All RED AND All BLUE AND a range of GREEN
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(255, i, 255, 127));
-            }
-            returnThis.Add(currentSet);
-
-            // All GREEN AND All RED AND a range of BLUE
-            currentSet = new List<Rgba32>();
-            for (int i = 0; i < 256; i++)
-            {
-                currentSet.Add(new Rgba32(255, 255, i, 127));
-            }
-            returnThis.Add(currentSet);
-
-            return returnThis;
+            return colourWheel;
         }
 
         public List<ColourWheel> GenerateColourWheels()
         {
-            var colourSpokes = GenerateColourSpokes();
+            var colourGradientVeryNarrow = 150;
+            var colourGradientNarrow = 300;
+            var colourGradientNormal = 1500;
+            var colourGradientWide = 3000;
+            var colourGradientVeryWide = 15000;
 
-            var colourWheelFirst = new List<Rgba32>();
-            foreach (var colourSpoke in colourSpokes)
-            {
-                colourWheelFirst.AddRange(colourSpoke);
-            }
+            var colourWheelBase = GenerateColourRangeGradient(colourGradientNormal, 0);
 
             var colourWheelRandom = new List<Rgba32>();
-            foreach (var colourSpoke in colourSpokes.OrderBy(cs => Guid.NewGuid()).ToList())
+            foreach (var colourSpoke in colourWheelBase.OrderBy(cs => Guid.NewGuid()).ToList())
             {
-                colourWheelRandom.AddRange(colourSpoke);
+                colourWheelRandom.Add(colourSpoke);
             }
 
             var returnThis = new List<ColourWheel>
             {
-                new("first", colourWheelFirst),
-                new("random", colourWheelRandom)
+                new("generated", colourWheelBase),
+                new("random", colourWheelRandom),
+                new("ninety-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 90)),
+                new("ninety-narrow", GenerateColourRangeGradient(colourGradientNarrow, 90)),
+                new("ninety", GenerateColourRangeGradient(colourGradientNormal, 90)),
+                new("ninety-wide", GenerateColourRangeGradient(colourGradientWide, 90)),
+                new("ninety-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 90))
             };
             return returnThis;
         }

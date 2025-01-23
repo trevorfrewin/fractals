@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace tfrewin.play.fractal.start
 {
@@ -28,7 +29,7 @@ namespace tfrewin.play.fractal.start
 
         public int ColourOffset { get; private set; }
 
-        public string ImageFilename { get; set; }
+        public List<string> ImageFilenames { get; set; }
 
         public ImageParameters(DateTime startTime, string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, double iterationFactor, string colourWheelName, int colourOffset)
         {
@@ -42,6 +43,7 @@ namespace tfrewin.play.fractal.start
             this.IterationFactor = iterationFactor;
             this.ColourWheelName = colourWheelName;
             this.ColourOffset = colourOffset;
+            this.ImageFilenames = [];
         }
     }
 }
