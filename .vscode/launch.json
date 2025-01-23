@@ -24,7 +24,7 @@
             "stopAtEntry": false
         },
         {
-            "name": ".NET Core Launch (mandelbrot) - v1 deep Number 2",
+            "name": ".NET Core Launch (mandelbrot) - v1 deep Number 1",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -35,12 +35,23 @@
             "stopAtEntry": false
         },
         {
-            "name": ".NET Core Launch (mandelbrot) - v1 deep Number 1",
+            "name": ".NET Core Launch (mandelbrot) - v1 deep Number 2",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/tfrewin.play.fractal.start/bin/Debug/net8.0/tfrewin.play.fractal.start.dll",
             "args": ["colourOffset=10", "zoom=1200", "moveX=-1.240128", "moveY=0.12291333", "colourWheelName=Generated", "widthmultiplier=2", "heightmultiplier=2"],
+            "cwd": "${workspaceFolder}/tfrewin.play.fractal.start",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Launch (mandelbrot) - v1 deep Number 2 Zoomed In",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/tfrewin.play.fractal.start/bin/Debug/net8.0/tfrewin.play.fractal.start.dll",
+            "args": ["colourOffset=10", "zoom=6000", "moveX=-1.240128", "moveY=0.12291333", "colourWheelName=Generated", "widthmultiplier=2", "heightmultiplier=2"],
             "cwd": "${workspaceFolder}/tfrewin.play.fractal.start",
             "console": "integratedTerminal",
             "stopAtEntry": false
