@@ -98,7 +98,7 @@ namespace tfrewin.play.fractal.start
             return new FormulaProcessorFactory().Create(setName).Process(planeWidth, planeHeight, zoom, moveX, moveY, maximumIteration);
         }
 
-        private void AnnotateImage(Image original, string annotations)
+        private void AnnotateImage(Image original, ImageParameters parameters)
         {
             const float TextPadding = 6f;
             const string TextFont = "Arial";
@@ -134,6 +134,7 @@ namespace tfrewin.play.fractal.start
                 }
             });
 
+            var annotations = JsonConvert.SerializeObject(parameters, Formatting.Indented);
             var rect = TextMeasurer.MeasureSize(annotations, options);
 
             original.Mutate(x => x.DrawText(
@@ -142,6 +143,22 @@ namespace tfrewin.play.fractal.start
                 new Color(Rgba32.ParseHex("#06121DFF")),
                 new PointF(original.Width - rect.Width - TextPadding,
                         original.Height - rect.Height - TextPadding)));
+
+            if (parameters.MatrixExtents != null)
+            {
+                var horizontalBlockSize = (parameters.MatrixExtents.TopLeftExtent.Item1 - parameters.MatrixExtents.TopRightExtent.Item1) / 10;
+                var verticalBlockSize = (parameters.MatrixExtents.TopLeftExtent.Item2 - parameters.MatrixExtents.BottomLeftExtent.Item1) / 10;
+
+                var sizeSummaryText = string.Format("Per-block offsets.{0}H: {1}{2}V: {3}", Environment.NewLine, horizontalBlockSize, Environment.NewLine, verticalBlockSize);
+
+                rect = TextMeasurer.MeasureSize(sizeSummaryText, options);
+
+                original.Mutate(x => x.DrawText(
+                    sizeSummaryText,
+                    font,
+                    new Color(Rgba32.ParseHex("#06121DFF")),
+                    new PointF(TextPadding, TextPadding)));
+            }
         }
 
         private void OutputFiles(Image image, ImageParameters parameters)
@@ -166,7 +183,7 @@ namespace tfrewin.play.fractal.start
             var parametersContent = JsonConvert.SerializeObject(parameters, Formatting.Indented);
             File.WriteAllText(parametersFilename, parametersContent);
 
-            AnnotateImage(image, parametersContent);
+            AnnotateImage(image, parameters);
             Console.WriteLine("Saving Annotated PNG '{0}' ...", imageAnnotatedPNGFilename);
             image.SaveAsPng(imageAnnotatedPNGFilename);
         }
