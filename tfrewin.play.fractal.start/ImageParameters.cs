@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using tfrewin.play.fractal.start.processor.output;
+
 namespace tfrewin.play.fractal.start
 {
     public class ImageParameters
@@ -30,6 +32,8 @@ namespace tfrewin.play.fractal.start
         public int ColourOffset { get; private set; }
 
         public List<string> ImageFilenames { get; set; }
+
+        public MatrixExtents MatrixExtents { get; set; }
 
         public ImageParameters(DateTime startTime, string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, double iterationFactor, string colourWheelName, int colourOffset)
         {
