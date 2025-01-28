@@ -1,3 +1,10 @@
+###
+### MacOS extra files
+###
+**/.DS_Store
+###
+### dotnet build files
+###
 **/bin/*
 **/obj/*
 */.vs/*
