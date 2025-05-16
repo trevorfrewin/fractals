@@ -63,7 +63,12 @@ namespace tfrewin.play.fractal.start.utilities
                 new("ninety-narrow", GenerateColourRangeGradient(colourGradientNarrow, 90)),
                 new("ninety", GenerateColourRangeGradient(colourGradientNormal, 90)),
                 new("ninety-wide", GenerateColourRangeGradient(colourGradientWide, 90)),
-                new("ninety-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 90))
+                new("ninety-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 90)),
+                new("oneeighty-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 180)),
+                new("oneeighty-narrow", GenerateColourRangeGradient(colourGradientNarrow, 180)),
+                new("oneeighty", GenerateColourRangeGradient(colourGradientNormal, 180)),
+                new("oneeighty-wide", GenerateColourRangeGradient(colourGradientWide, 180)),
+                new("oneeighty-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 180))
             };
             return returnThis;
         }
