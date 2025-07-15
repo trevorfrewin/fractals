@@ -90,6 +90,18 @@
             "stopAtEntry": false
         },
         {
+            "name": "Winforms Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-form",
+            "program": "${workspaceFolder}/tfrewin.play.fractal.windows/bin/Debug/net9.0-windows/tfrewin.play.fractal.windows.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/tfrewin.play.fractal.windows",
+            "console": "integratedTerminal",
+            "requireExactSource": true,
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"

@@ -23,7 +23,7 @@ using tfrewin.play.fractal.start.utilities;
 
 namespace tfrewin.play.fractal.start
 {
-    class Program
+    public class Program
     {
         private List<ColourWheel> ColorWheels;
 
@@ -90,7 +90,9 @@ namespace tfrewin.play.fractal.start
                 moveY = double.Parse(args.First(a => a.ToLower().StartsWith("movey=")).ToLower().Replace("movey=", string.Empty));
             }
 
-            new Program().PaintFile(new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourWheelName, colourOffset));
+            var program = new Program();
+            var results = program.PaintFile(new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourWheelName, colourOffset));
+            program.OutputFiles(results.Item1, results.Item2);
         }
 
         private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, int maximumIteration)
@@ -161,7 +163,7 @@ namespace tfrewin.play.fractal.start
             }
         }
 
-        private void OutputFiles(Image image, ImageParameters parameters)
+        public void OutputFiles(Image image, ImageParameters parameters)
         {
             var filename = string.Format("{0}-{1}.output", parameters.SetName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
             var imagePNGFilename = string.Concat(filename, ".png");
@@ -188,7 +190,7 @@ namespace tfrewin.play.fractal.start
             image.SaveAsPng(imageAnnotatedPNGFilename);
         }
 
-        public void PaintFile(ImageParameters parameters)
+        public Tuple<Image, ImageParameters> PaintFile(ImageParameters parameters)
         {
             var colours = this.ColorWheels.Where(cw => cw.ColourWheelName.Equals(parameters.ColourWheelName)).FirstOrDefault().Colours.ToArray();
 
@@ -206,29 +208,27 @@ namespace tfrewin.play.fractal.start
             var paintingStopWatch = new Stopwatch();
             paintingStopWatch.Start();
 
-            using (Image<Rgba32> image = new(parameters.PlaneWidth, parameters.PlaneHeight))
+            Image<Rgba32> image = new(parameters.PlaneWidth, parameters.PlaneHeight);
+            foreach (var point in matrix)
             {
-                foreach (var point in matrix)
+                int colourPoint = 0;
+
+                if (point.IterationCount > 0)
                 {
-                    int colourPoint = 0;
+                    colourPoint = (int)(point.IterationCount / parameters.IterationFactor) + parameters.ColourOffset;
 
-                    if (point.IterationCount > 0)
+                    while (colourPoint >= colours.Length)
                     {
-                        colourPoint = (int)(point.IterationCount / parameters.IterationFactor) + parameters.ColourOffset;
-
-                        while (colourPoint >= colours.Length)
-                        {
-                            colourPoint -= colours.Length;
-                        }
+                        colourPoint -= colours.Length;
                     }
-
-                    image[point.XAxisValue, point.YAxisValue] = colours[colourPoint];
                 }
-                paintingStopWatch.Stop();
-                parameters.PaintMilliseconds = paintingStopWatch.ElapsedMilliseconds;
 
-                OutputFiles(image, parameters);
+                image[point.XAxisValue, point.YAxisValue] = colours[colourPoint];
             }
+            paintingStopWatch.Stop();
+            parameters.PaintMilliseconds = paintingStopWatch.ElapsedMilliseconds;
+
+            return new Tuple<Image, ImageParameters>(image, parameters);
         }
     }
 }
