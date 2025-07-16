@@ -1,17 +1,17 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SixLabors.ImageSharp;
+
 using tfrewin.play.fractal.start;
 using tfrewin.play.fractal.start.processor;
 using tfrewin.play.fractal.start.utilities;
-using SixLabors.ImageSharp;
-
 
 namespace tfrewin.play.fractal.windows;
 
 public partial class FormMain : Form
 {
-    private tfrewin.play.fractal.start.ImageParameters _imageParameters = null;
+    private ImageParameters _imageParameters = null!;
 
     public FormMain()
     {
@@ -83,61 +83,67 @@ public partial class FormMain : Form
         this.Controls.Add(resetButton);
     }
 
-    private void imageContainer_Click(object sender, EventArgs e)
+    private void imageContainer_Click(object? sender, EventArgs e)
     {
+        if (this._imageParameters == null)
+        {
+            MessageBox.Show("Please Apply or Reset the form.");
+            return;
+        }
+
         try
-        {
-            var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
-            var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
-            var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
-
-            var zoomAmount = zoomControl.Value;
-
-            var mouseEvent = (MouseEventArgs)e;
-
-            if (mouseEvent.Button == MouseButtons.Left)
             {
-                zoomAmount *= 2;
-            }
+                var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
+                var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
+                var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
 
-            if (mouseEvent.Button == MouseButtons.Right)
+                var zoomAmount = zoomControl.Value;
+
+                var mouseEvent = (MouseEventArgs)e;
+
+                if (mouseEvent.Button == MouseButtons.Left)
+                {
+                    zoomAmount *= 2;
+                }
+
+                if (mouseEvent.Button == MouseButtons.Right)
+                {
+                    zoomAmount /= 2;
+                }
+                zoomControl.Value = zoomAmount;
+
+                // The extents of the underlying cartesian plane
+                var maxX = this._imageParameters.MatrixExtents.BottomRightExtent.Item1;
+                var maxY = this._imageParameters.MatrixExtents.TopLeftExtent.Item2;
+                var minX = this._imageParameters.MatrixExtents.TopLeftExtent.Item1;
+                var minY = this._imageParameters.MatrixExtents.BottomRightExtent.Item2;
+
+                var spanX = maxX - minX;
+                var spanY = maxY - minY;
+
+                var currentBox = (PictureBox)sender!;
+                var portionX = (double)mouseEvent.Location.X / currentBox.Width;
+                var portionY = (double)mouseEvent.Location.Y / currentBox.Height;
+
+                var changeX = spanX * portionX;
+                var changeY = spanY * portionY;
+
+                var xOffset = minX + changeX;
+                var yOffset = maxY - changeY;
+
+                moveXControl.Value = (decimal)xOffset;
+                moveYControl.Value = (decimal)yOffset;
+
+                var applyButton = (Button)this.Controls.Find("Apply", true).First();
+                applyButton.PerformClick();
+            }
+            catch (Exception)
             {
-                zoomAmount /= 2;
+                MessageBox.Show(this, "Something failed in rendering. Zoomed in or out too far?");
             }
-            zoomControl.Value = zoomAmount;
-
-            // The extents of the underlying cartesian plane
-            var maxX = this._imageParameters.MatrixExtents.BottomRightExtent.Item1;
-            var maxY = this._imageParameters.MatrixExtents.TopLeftExtent.Item2;
-            var minX = this._imageParameters.MatrixExtents.TopLeftExtent.Item1;
-            var minY = this._imageParameters.MatrixExtents.BottomRightExtent.Item2;
-
-            var spanX = maxX - minX;
-            var spanY = maxY - minY;
-
-            var currentBox = (PictureBox)sender;
-            var portionX = (double)mouseEvent.Location.X / currentBox.Width;
-            var portionY = (double)mouseEvent.Location.Y / currentBox.Height;
-
-            var changeX = spanX * portionX;
-            var changeY = spanY * portionY;
-
-            var xOffset = minX + changeX;
-            var yOffset = maxY - changeY;
-
-            moveXControl.Value = (decimal)xOffset;
-            moveYControl.Value = (decimal)yOffset;
-
-            var applyButton = (Button)this.Controls.Find("Apply", true).First();
-            applyButton.PerformClick();
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(this, "Something failed in rendering. Zoomed in or out too far?");
-        }
     }
 
-    private void applyButton_Click(object sender, EventArgs e)
+    private void applyButton_Click(object? sender, EventArgs e)
     {
         var setNameControl = (ComboBox)this.Controls.Find("SetName", true).First();
         var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
@@ -173,7 +179,7 @@ public partial class FormMain : Form
         pictureBox.Image = image;
     }
 
-    private void resetButton_Click(object sender, EventArgs e)
+    private void resetButton_Click(object? sender, EventArgs e)
     {
         var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
         var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
