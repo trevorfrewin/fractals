@@ -11,6 +11,8 @@ namespace tfrewin.play.fractal.windows;
 
 public partial class FormMain : Form
 {
+    private tfrewin.play.fractal.start.ImageParameters _imageParameters = null;
+
     public FormMain()
     {
         InitializeComponent();
@@ -50,24 +52,92 @@ public partial class FormMain : Form
             SizeMode = PictureBoxSizeMode.StretchImage,
             Name = "ImageContainer"
         };
+        imageContainer.Click += imageContainer_Click;
 
         outputBox.Controls.Add(imageContainer);
         this.Controls.Add(outputBox);
 
-        var applyButtonWidth = 80;
+        var buttonWidth = 80;
         var applyButton = new Button
         {
-            Text = "&Apply",
+            Text = "Apply",
             Top = layoutBox.Top + layoutBox.Height + 10,
-            Width = applyButtonWidth,
-            Left = (layoutBox.Left + layoutBox.Width) - applyButtonWidth
+            Width = buttonWidth,
+            Left = (layoutBox.Left + layoutBox.Width) - buttonWidth,
+            Name = "Apply"
         };
-        applyButton.Click += MyNewButton_Click;
+        applyButton.Click += applyButton_Click;
 
         this.Controls.Add(applyButton);
+
+        var resetButton = new Button
+        {
+            Text = "Reset",
+            Top = layoutBox.Top + layoutBox.Height + applyButton.Height + 20,
+            Width = buttonWidth,
+            Left = (layoutBox.Left + layoutBox.Width) - buttonWidth,
+            Name = "Reset"
+        };
+        resetButton.Click += resetButton_Click;
+
+        this.Controls.Add(resetButton);
     }
 
-    private void MyNewButton_Click(object sender, EventArgs e)
+    private void imageContainer_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
+            var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
+            var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
+
+            var zoomAmount = zoomControl.Value;
+
+            var mouseEvent = (MouseEventArgs)e;
+
+            if (mouseEvent.Button == MouseButtons.Left)
+            {
+                zoomAmount *= 2;
+            }
+
+            if (mouseEvent.Button == MouseButtons.Right)
+            {
+                zoomAmount /= 2;
+            }
+            zoomControl.Value = zoomAmount;
+
+            // The extents of the underlying cartesian plane
+            var maxX = this._imageParameters.MatrixExtents.BottomRightExtent.Item1;
+            var maxY = this._imageParameters.MatrixExtents.TopLeftExtent.Item2;
+            var minX = this._imageParameters.MatrixExtents.TopLeftExtent.Item1;
+            var minY = this._imageParameters.MatrixExtents.BottomRightExtent.Item2;
+
+            var spanX = maxX - minX;
+            var spanY = maxY - minY;
+
+            var currentBox = (PictureBox)sender;
+            var portionX = (double)mouseEvent.Location.X / currentBox.Width;
+            var portionY = (double)mouseEvent.Location.Y / currentBox.Height;
+
+            var changeX = spanX * portionX;
+            var changeY = spanY * portionY;
+
+            var xOffset = minX + changeX;
+            var yOffset = maxY - changeY;
+
+            moveXControl.Value = (decimal)xOffset;
+            moveYControl.Value = (decimal)yOffset;
+
+            var applyButton = (Button)this.Controls.Find("Apply", true).First();
+            applyButton.PerformClick();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, "Something failed in rendering. Zoomed in or out too far?");
+        }
+    }
+
+    private void applyButton_Click(object sender, EventArgs e)
     {
         var setNameControl = (ComboBox)this.Controls.Find("SetName", true).First();
         var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
@@ -92,6 +162,8 @@ public partial class FormMain : Form
                     (int)iterationFactorControl.Value,
                     colourWheelControl.Text, 0));
 
+        this._imageParameters = results.Item2; // Has MatrixExtents on this after engine execution.
+
         var interimStream = new MemoryStream();
         results.Item1.SaveAsJpeg(interimStream);
         interimStream.Seek(0, SeekOrigin.Begin);
@@ -99,6 +171,20 @@ public partial class FormMain : Form
         var image = System.Drawing.Image.FromStream(interimStream);
         var pictureBox = (PictureBox)this.Controls.Find("ImageContainer", true).First();
         pictureBox.Image = image;
+    }
+
+    private void resetButton_Click(object sender, EventArgs e)
+    {
+        var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
+        var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
+        var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
+
+        zoomControl.Value = 1;
+        moveXControl.Value = 0;
+        moveYControl.Value = 0;
+
+        var applyButton = (Button)this.Controls.Find("Apply", true).First();
+        applyButton.PerformClick();
     }
 
     private Label AddColourWheelControl(int top, int left, GroupBox owner)
@@ -217,8 +303,8 @@ public partial class FormMain : Form
         var zoomBox = new NumericUpDown
         {
             Text = "Zoom:",
-            DecimalPlaces = 5,
-            Maximum = 100000,
+            DecimalPlaces = 2,
+            Maximum = 900000000000000,
             Minimum = 0.1M,
             Value = 1,
             Increment = 0.1M,
@@ -244,9 +330,9 @@ public partial class FormMain : Form
         var moveXBox = new NumericUpDown
         {
             Text = "Move X:",
-            DecimalPlaces = 5,
-            Maximum = 2,
-            Minimum = -2,
+            DecimalPlaces = 15,
+            Maximum = 8,
+            Minimum = -8,
             Value = 0,
             Increment = 0.01M,
             Top = moveXLabel.Top - 5,
@@ -271,9 +357,9 @@ public partial class FormMain : Form
         var moveYBox = new NumericUpDown
         {
             Text = "Move Y:",
-            DecimalPlaces = 5,
-            Maximum = 2,
-            Minimum = -2,
+            DecimalPlaces = 15,
+            Maximum = 8,
+            Minimum = -8,
             Value = 0,
             Increment = 0.01M,
             Top = moveYLabel.Top - 5,
@@ -298,7 +384,7 @@ public partial class FormMain : Form
         var iterationFactorBox = new NumericUpDown
         {
             Text = "Iteration Factor:",
-            DecimalPlaces = 5,
+            DecimalPlaces = 2,
             Maximum = 4,
             Minimum = 0.5M,
             Value = 1,
