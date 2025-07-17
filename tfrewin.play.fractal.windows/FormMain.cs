@@ -28,8 +28,7 @@ public partial class FormMain : Form
 
         Label label = AddColourWheelControl(20, 20, layoutBox);
         label = AddSetNameControl(label.Top + 30, label.Left, layoutBox);
-        label = AddPlaneWidthControl(label.Top + 30, label.Left, layoutBox);
-        label = AddPlaneHeightControl(label.Top + 30, label.Left, layoutBox);
+        label = AddOutputQualityControl(label.Top + 30, label.Left, layoutBox);
         label = AddZoomControl(label.Top + 30, label.Left, layoutBox);
         label = AddMoveXControl(label.Top + 30, label.Left, layoutBox);
         label = AddMoveYControl(label.Top + 30, label.Left, layoutBox);
@@ -92,67 +91,96 @@ public partial class FormMain : Form
         }
 
         try
+        {
+            var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
+            var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
+            var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
+
+            var zoomAmount = zoomControl.Value;
+
+            var mouseEvent = (MouseEventArgs)e;
+
+            if (mouseEvent.Button == MouseButtons.Left)
             {
-                var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
-                var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
-                var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
-
-                var zoomAmount = zoomControl.Value;
-
-                var mouseEvent = (MouseEventArgs)e;
-
-                if (mouseEvent.Button == MouseButtons.Left)
-                {
-                    zoomAmount *= 2;
-                }
-
-                if (mouseEvent.Button == MouseButtons.Right)
-                {
-                    zoomAmount /= 2;
-                }
-                zoomControl.Value = zoomAmount;
-
-                // The extents of the underlying cartesian plane
-                var maxX = this._imageParameters.MatrixExtents.BottomRightExtent.Item1;
-                var maxY = this._imageParameters.MatrixExtents.TopLeftExtent.Item2;
-                var minX = this._imageParameters.MatrixExtents.TopLeftExtent.Item1;
-                var minY = this._imageParameters.MatrixExtents.BottomRightExtent.Item2;
-
-                var spanX = maxX - minX;
-                var spanY = maxY - minY;
-
-                var currentBox = (PictureBox)sender!;
-                var portionX = (double)mouseEvent.Location.X / currentBox.Width;
-                var portionY = (double)mouseEvent.Location.Y / currentBox.Height;
-
-                var changeX = spanX * portionX;
-                var changeY = spanY * portionY;
-
-                var xOffset = minX + changeX;
-                var yOffset = maxY - changeY;
-
-                moveXControl.Value = (decimal)xOffset;
-                moveYControl.Value = (decimal)yOffset;
-
-                var applyButton = (Button)this.Controls.Find("Apply", true).First();
-                applyButton.PerformClick();
+                zoomAmount *= 2;
             }
-            catch (Exception)
+
+            if (mouseEvent.Button == MouseButtons.Right)
             {
-                MessageBox.Show(this, "Something failed in rendering. Zoomed in or out too far?");
+                zoomAmount /= 2;
             }
+            zoomControl.Value = zoomAmount;
+
+            // The extents of the underlying cartesian plane
+            var maxX = this._imageParameters.MatrixExtents.BottomRightExtent.Item1;
+            var maxY = this._imageParameters.MatrixExtents.TopLeftExtent.Item2;
+            var minX = this._imageParameters.MatrixExtents.TopLeftExtent.Item1;
+            var minY = this._imageParameters.MatrixExtents.BottomRightExtent.Item2;
+
+            var spanX = maxX - minX;
+            var spanY = maxY - minY;
+
+            var currentBox = (PictureBox)sender!;
+            var portionX = (double)mouseEvent.Location.X / currentBox.Width;
+            var portionY = (double)mouseEvent.Location.Y / currentBox.Height;
+
+            var changeX = spanX * portionX;
+            var changeY = spanY * portionY;
+
+            var xOffset = minX + changeX;
+            var yOffset = maxY - changeY;
+
+            moveXControl.Value = (decimal)xOffset;
+            moveYControl.Value = (decimal)yOffset;
+
+            var applyButton = (Button)this.Controls.Find("Apply", true).First();
+            applyButton.PerformClick();
+        }
+        catch (Exception)
+        {
+            MessageBox.Show(this, "Something failed in rendering. Zoomed in or out too far?");
+        }
     }
 
     private void applyButton_Click(object? sender, EventArgs e)
     {
         var setNameControl = (ComboBox)this.Controls.Find("SetName", true).First();
         var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
-        var planeWidthControl = (NumericUpDown)this.Controls.Find("PlaneWidth", true).First();
-        var planeHeightControl = (NumericUpDown)this.Controls.Find("PlaneHeight", true).First();
+        var outputQualityControl = (ComboBox)this.Controls.Find("OutputQuality", true).First();
         var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
         var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
         var iterationFactorControl = (NumericUpDown)this.Controls.Find("IterationFactor", true).First();
         var colourWheelControl = (ComboBox)this.Controls.Find("ColourWheel", true).First();
+
+        var planeWidth = 300;
+        var planeHeight = 200;
+        switch (outputQualityControl.Text)
+        {
+            case "Fast":
+                {
+                    planeWidth *= 1;
+                    planeHeight *= 1;
+                    break;
+                }
+            case "Medium":
+                {
+                    planeWidth *= 3;
+                    planeHeight *= 3;
+                    break;
+                }
+            case "High Quality":
+                {
+                    planeWidth *= 8;
+                    planeHeight *= 8;
+                    break;
+                }
+            case "Best":
+                {
+                    planeWidth *= 15;
+                    planeHeight *= 15;
+                    break;
+                }
+        }
 
         var program = new tfrewin.play.fractal.start.Program();
         Tuple<SixLabors.ImageSharp.Image, ImageParameters> results
@@ -160,8 +188,8 @@ public partial class FormMain : Form
                 new ImageParameters(
                     DateTime.UtcNow,
                     setNameControl.Text,
-                    (int)planeWidthControl.Value,
-                    (int)planeHeightControl.Value,
+                    planeWidth,
+                    planeHeight,
                     (double)zoomControl.Value,
                     (double)moveXControl.Value,
                     (double)moveYControl.Value,
@@ -244,56 +272,29 @@ public partial class FormMain : Form
         return setNameLabel;
     }
 
-    private Label AddPlaneWidthControl(int top, int left, GroupBox owner)
+    private Label AddOutputQualityControl(int top, int left, GroupBox owner)
     {
-        var planeWithLabel = new Label
+        var outputQualityLabel = new Label
         {
-            Text = "Plane Width:",
+            Text = "Output Quality:",
             Top = top,
             Left = left
         };
-        owner.Controls.Add(planeWithLabel);
+        owner.Controls.Add(outputQualityLabel);
 
-        var planeWidthBox = new NumericUpDown
+        var qualityOptions = new List<string> { "Fast", "Medium", "High Quality", "Best" };
+        var colourWheelBox = new ComboBox
         {
-            Text = "Plane Width:",
-            Maximum = 24000,
-            Minimum = 400,
-            Value = 600,
-            Increment = 100,
-            Top = planeWithLabel.Top - 5,
-            Left = planeWithLabel.Left + 100,
-            Name = "PlaneWidth"
+            DataSource = qualityOptions,
+            Text = "Output Quality:",
+            Top = outputQualityLabel.Top - 5,
+            Left = outputQualityLabel.Left + 100,
+            DropDownStyle = ComboBoxStyle.DropDownList,
+            Name = "OutputQuality"
         };
-        owner.Controls.Add(planeWidthBox);
+        owner.Controls.Add(colourWheelBox);
 
-        return planeWithLabel;
-    }
-
-    private Label AddPlaneHeightControl(int top, int left, GroupBox owner)
-    {
-        var planeHeightLabel = new Label
-        {
-            Text = "Plane Height:",
-            Top = top,
-            Left = left
-        };
-        owner.Controls.Add(planeHeightLabel);
-
-        var planeHeightBox = new NumericUpDown
-        {
-            Text = "Plane Height:",
-            Maximum = 8000,
-            Minimum = 200,
-            Value = 400,
-            Increment = 100,
-            Top = planeHeightLabel.Top - 5,
-            Left = planeHeightLabel.Left + 100,
-            Name = "PlaneHeight"
-        };
-        owner.Controls.Add(planeHeightBox);
-
-        return planeHeightLabel;
+        return outputQualityLabel;
     }
 
     private Label AddZoomControl(int top, int left, GroupBox owner)
@@ -390,11 +391,11 @@ public partial class FormMain : Form
         var iterationFactorBox = new NumericUpDown
         {
             Text = "Iteration Factor:",
-            DecimalPlaces = 2,
+            DecimalPlaces = 0,
             Maximum = 4,
             Minimum = 0.5M,
             Value = 1,
-            Increment = 0.1M,
+            Increment = 1,
             Top = iterationFactorLabel.Top - 5,
             Left = iterationFactorLabel.Left + 100,
             Name = "IterationFactor"
