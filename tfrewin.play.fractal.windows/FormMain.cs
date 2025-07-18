@@ -193,10 +193,22 @@ public partial class FormMain : Form
                     planeHeight *= 8;
                     break;
                 }
-            case "Best":
+            case "Better":
                 {
                     planeWidth *= 15;
                     planeHeight *= 15;
+                    break;
+                }
+            case "Best":
+                {
+                    planeWidth *= 20;
+                    planeHeight *= 20;
+                    break;
+                }
+            case "Extreme":
+                {
+                    planeWidth *= 30;
+                    planeHeight *= 30;
                     break;
                 }
         }
@@ -340,8 +352,8 @@ public partial class FormMain : Form
         };
         owner.Controls.Add(outputQualityLabel);
 
-        var qualityOptions = new List<string> { "Fast", "Medium", "High Quality", "Best" };
-        var outputQualityBox = new ComboBox
+        var qualityOptions = new List<string> { "Fast", "Medium", "High Quality", "Better", "Best", "Extreme" };
+        var qualityOptionsBox = new ComboBox
         {
             DataSource = qualityOptions,
             Text = "Output Quality:",
@@ -350,7 +362,7 @@ public partial class FormMain : Form
             DropDownStyle = ComboBoxStyle.DropDownList,
             Name = "OutputQuality"
         };
-        owner.Controls.Add(outputQualityBox);
+        owner.Controls.Add(qualityOptionsBox);
 
         return outputQualityLabel;
     }
