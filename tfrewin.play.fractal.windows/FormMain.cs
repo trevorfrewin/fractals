@@ -13,6 +13,8 @@ public partial class FormMain : Form
 {
     private ImageParameters _imageParameters = null!;
 
+    private const int _labelWidth = 140;
+
     public FormMain()
     {
         InitializeComponent();
@@ -23,16 +25,17 @@ public partial class FormMain : Form
         {
             Left = 10,
             Text = "Layout Choices",
-            ClientSize = new System.Drawing.Size(250, 275)
+            ClientSize = new System.Drawing.Size(350, 370)
         };
 
-        Label label = AddColourWheelControl(20, 20, layoutBox);
-        label = AddSetNameControl(label.Top + 30, label.Left, layoutBox);
-        label = AddOutputQualityControl(label.Top + 30, label.Left, layoutBox);
-        label = AddZoomControl(label.Top + 30, label.Left, layoutBox);
-        label = AddMoveXControl(label.Top + 30, label.Left, layoutBox);
-        label = AddMoveYControl(label.Top + 30, label.Left, layoutBox);
-        label = AddIterationFactorControl(label.Top + 30, label.Left, layoutBox);
+        Label label = AddColourWheelControl(40, 20, layoutBox);
+        label = AddSetNameControl(label.Top + 40, label.Left, layoutBox);
+        label = AddOutputQualityControl(label.Top + 40, label.Left, layoutBox);
+        label = AddOutputTypeControl(label.Top + 40, label.Left, layoutBox);
+        label = AddZoomControl(label.Top + 40, label.Left, layoutBox);
+        label = AddMoveXControl(label.Top + 40, label.Left, layoutBox);
+        label = AddMoveYControl(label.Top + 40, label.Left, layoutBox);
+        label = AddIterationFactorControl(label.Top + 40, label.Left, layoutBox);
 
         this.Controls.Add(layoutBox);
 
@@ -60,6 +63,7 @@ public partial class FormMain : Form
         var applyButton = new Button
         {
             Text = "Apply",
+            Height = 40,
             Top = layoutBox.Top + layoutBox.Height + 10,
             Width = buttonWidth,
             Left = (layoutBox.Left + layoutBox.Width) - buttonWidth,
@@ -72,14 +76,28 @@ public partial class FormMain : Form
         var resetButton = new Button
         {
             Text = "Reset",
-            Top = layoutBox.Top + layoutBox.Height + applyButton.Height + 20,
+            Height = 40,
+            Top = applyButton.Top + applyButton.Height + 20,
             Width = buttonWidth,
-            Left = (layoutBox.Left + layoutBox.Width) - buttonWidth,
+            Left = applyButton.Left,
             Name = "Reset"
         };
         resetButton.Click += resetButton_Click;
 
         this.Controls.Add(resetButton);
+
+        var saveButton = new Button
+        {
+            Text = "Save",
+            Height = 40,
+            Top = resetButton.Top + resetButton.Height + 20,
+            Width = buttonWidth,
+            Left = applyButton.Left,
+            Name = "Save"
+        };
+        saveButton.Click += saveButton_Click;
+
+        this.Controls.Add(saveButton);
     }
 
     private void imageContainer_Click(object? sender, EventArgs e)
@@ -147,6 +165,7 @@ public partial class FormMain : Form
         var setNameControl = (ComboBox)this.Controls.Find("SetName", true).First();
         var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
         var outputQualityControl = (ComboBox)this.Controls.Find("OutputQuality", true).First();
+        var outputTypeControl = (ComboBox)this.Controls.Find("OutputType", true).First();
         var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
         var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
         var iterationFactorControl = (NumericUpDown)this.Controls.Find("IterationFactor", true).First();
@@ -211,7 +230,15 @@ public partial class FormMain : Form
         this._imageParameters = results.Item2; // Has MatrixExtents on this after engine execution.
 
         var interimStream = new MemoryStream();
-        results.Item1.SaveAsJpeg(interimStream);
+        switch (outputTypeControl.Text)
+        {
+            case "PNG":
+                results.Item1.SaveAsPng(interimStream);
+                break;
+            case "JPG":
+                results.Item1.SaveAsJpeg(interimStream);
+                break;
+        }
         interimStream.Seek(0, SeekOrigin.Begin);
 
         var image = System.Drawing.Image.FromStream(interimStream);
@@ -233,11 +260,40 @@ public partial class FormMain : Form
         applyButton.PerformClick();
     }
 
+    private void saveButton_Click(object? sender, EventArgs e)
+    {
+        var outputTypeControl = (ComboBox)this.Controls.Find("OutputType", true).First();
+
+        var saveDialog = new SaveFileDialog();
+
+        switch (outputTypeControl.Text)
+        {
+            case "PNG":
+                saveDialog.Filter = "PNG (*.png)|*.png";
+                break;
+            case "JPG":
+                saveDialog.Filter = "JPG (*.jpg)|*.jpg";
+                break;    
+        }
+
+        var result = saveDialog.ShowDialog();
+        if (result == DialogResult.OK)
+        {
+            String fileName = saveDialog.FileName;
+
+            var pictureBox = (PictureBox)this.Controls.Find("ImageContainer", true).First();
+
+            var imageBytes = (byte[])(new ImageConverter()).ConvertTo(pictureBox.Image, typeof(byte[]));
+            File.WriteAllBytes(fileName, imageBytes);
+        }
+    }
+
     private Label AddColourWheelControl(int top, int left, GroupBox owner)
     {
         var colourWheelLabel = new Label
         {
             Text = "Colour Wheel:",
+            Width = _labelWidth,
             Top = top,
             Left = left
         };
@@ -250,7 +306,7 @@ public partial class FormMain : Form
             DataSource = colourWheelNames,
             Text = "Colour Wheel:",
             Top = colourWheelLabel.Top - 5,
-            Left = colourWheelLabel.Left + 100,
+            Left = colourWheelLabel.Left + _labelWidth + 20,
             DropDownStyle = ComboBoxStyle.DropDownList,
             Name = "ColourWheel"
         };
@@ -264,6 +320,7 @@ public partial class FormMain : Form
         var setNameLabel = new Label
         {
             Text = "Fractal Set:",
+            Width = _labelWidth,
             Top = top,
             Left = left
         };
@@ -275,7 +332,7 @@ public partial class FormMain : Form
             DataSource = setNames,
             Text = "Set Name:",
             Top = setNameLabel.Top - 5,
-            Left = setNameLabel.Left + 100,
+            Left = setNameLabel.Left + _labelWidth + 20,
             DropDownStyle = ComboBoxStyle.DropDownList,
             Name = "SetName"
         };
@@ -289,6 +346,7 @@ public partial class FormMain : Form
         var outputQualityLabel = new Label
         {
             Text = "Output Quality:",
+            Width = _labelWidth,
             Top = top,
             Left = left
         };
@@ -300,7 +358,7 @@ public partial class FormMain : Form
             DataSource = qualityOptions,
             Text = "Output Quality:",
             Top = outputQualityLabel.Top - 5,
-            Left = outputQualityLabel.Left + 100,
+            Left = outputQualityLabel.Left + _labelWidth + 20,
             DropDownStyle = ComboBoxStyle.DropDownList,
             Name = "OutputQuality"
         };
@@ -309,11 +367,38 @@ public partial class FormMain : Form
         return outputQualityLabel;
     }
 
+    private Label AddOutputTypeControl(int top, int left, GroupBox owner)
+    {
+        var outputTypeLabel = new Label
+        {
+            Text = "Output Type:",
+            Width = _labelWidth,
+            Top = top,
+            Left = left
+        };
+        owner.Controls.Add(outputTypeLabel);
+
+        var outputOptions = new List<string> { "JPG", "PNG" };
+        var outputTypeBox = new ComboBox
+        {
+            DataSource = outputOptions,
+            Text = "Output Type:",
+            Top = outputTypeLabel.Top - 5,
+            Left = outputTypeLabel.Left + _labelWidth + 20,
+            DropDownStyle = ComboBoxStyle.DropDownList,
+            Name = "OutputType"
+        };
+        owner.Controls.Add(outputTypeBox);
+
+        return outputTypeLabel;
+    }
+
     private Label AddZoomControl(int top, int left, GroupBox owner)
     {
         var zoomLabel = new Label
         {
             Text = "Zoom:",
+            Width = _labelWidth,
             Top = top,
             Left = left
         };
@@ -328,7 +413,7 @@ public partial class FormMain : Form
             Value = 1,
             Increment = 0.1M,
             Top = zoomLabel.Top - 5,
-            Left = zoomLabel.Left + 100,
+            Left = zoomLabel.Left + _labelWidth + 20,
             Name = "Zoom"
         };
         owner.Controls.Add(zoomBox);
@@ -341,6 +426,7 @@ public partial class FormMain : Form
         var moveXLabel = new Label
         {
             Text = "Move X:",
+            Width = _labelWidth,
             Top = top,
             Left = left
         };
@@ -355,7 +441,7 @@ public partial class FormMain : Form
             Value = 0,
             Increment = 0.01M,
             Top = moveXLabel.Top - 5,
-            Left = moveXLabel.Left + 100,
+            Left = moveXLabel.Left + _labelWidth + 20,
             Name = "MoveX"
         };
         owner.Controls.Add(moveXBox);
@@ -368,6 +454,7 @@ public partial class FormMain : Form
         var moveYLabel = new Label
         {
             Text = "Move Y:",
+            Width = _labelWidth,
             Top = top,
             Left = left
         };
@@ -382,7 +469,7 @@ public partial class FormMain : Form
             Value = 0,
             Increment = 0.01M,
             Top = moveYLabel.Top - 5,
-            Left = moveYLabel.Left + 100,
+            Left = moveYLabel.Left + _labelWidth + 20,
             Name = "MoveY"
         };
         owner.Controls.Add(moveYBox);
@@ -395,6 +482,7 @@ public partial class FormMain : Form
         var iterationFactorLabel = new Label
         {
             Text = "Iteration Factor:",
+            Width = _labelWidth,
             Top = top,
             Left = left
         };
@@ -409,7 +497,7 @@ public partial class FormMain : Form
             Value = 1,
             Increment = 1,
             Top = iterationFactorLabel.Top - 5,
-            Left = iterationFactorLabel.Left + 100,
+            Left = iterationFactorLabel.Left + _labelWidth + 20,
             Name = "IterationFactor"
         };
         owner.Controls.Add(iterationFactorBox);
