@@ -39,6 +39,64 @@ namespace tfrewin.play.fractal.start.utilities
             return colourWheel;
         }
 
+        private List<Rgba32> GenerateCyanColourBand(int numberOfColours, float startAngle)
+        {
+            List<Rgba32> colourWheel = [];
+            colourWheel.Add(new Rgba32()); // Add [JPG:Black]/[PNG:Transparent] as the first colour (used when the rule breaks in the Fractal)
+
+            for (int i = 0; i < numberOfColours; i++)
+            {
+                // LightCyan: E0FFFF
+                // Cyan: 00FFFF
+                // DarkCyan: 008B8B
+
+                // R: E0 -> 00
+                // G: FF -> 8B
+                // B: FF -> 8B
+
+                // E0 is (dec)224
+                // 8B is (dec)139 (or 255-116)
+                byte redFloat, greenFloat, blueFloat;
+                redFloat = (byte)(224 - (224 * (i / (float)numberOfColours))); //E0 -> 00
+                greenFloat = (byte)(255 - (116 * (i / (float)numberOfColours))); // FF -> 8B
+                blueFloat = (byte)(255 - (116 * (i / (float)numberOfColours))); // FF -> 8B
+
+                Rgba32 color = new Rgba32(redFloat, greenFloat, blueFloat);
+                colourWheel.Add(color);
+            }
+
+            return colourWheel;
+        }
+
+        private List<Rgba32> GenerateMagentaColourBand(int numberOfColours, float startAngle)
+        {
+            List<Rgba32> colourWheel = [];
+            colourWheel.Add(new Rgba32()); // Add [JPG:Black]/[PNG:Transparent] as the first colour (used when the rule breaks in the Fractal)
+
+            for (int i = 0; i < numberOfColours; i++)
+            {
+                // LightMagenta: FF80FF
+                // Magenta: FF00FF
+                // DarkMagenta: 8B008B
+
+                // R: FF -> 8B
+                // G: 80 -> 00
+                // B: FF -> 8B
+
+                // E0 is (dec)224
+                // 8B is (dec)139 (or 255-116)
+                byte redFloat, greenFloat, blueFloat;
+                redFloat = (byte)(255 - (116 * (i / (float)numberOfColours))); //FF -> 8B
+                greenFloat = (byte)(128 - (128 * (i / (float)numberOfColours))); // 80 -> 00
+                blueFloat = (byte)(255 - (116 * (i / (float)numberOfColours))); // FF -> 8B
+
+                Rgba32 color = new Rgba32(redFloat, greenFloat, blueFloat);
+                colourWheel.Add(color);
+            }
+
+            return colourWheel;
+        }
+
         public List<ColourWheel> GenerateColourWheels()
         {
             var colourGradientVeryNarrow = 150;
@@ -59,16 +117,31 @@ namespace tfrewin.play.fractal.start.utilities
             {
                 new("generated", colourWheelBase),
                 new("random", colourWheelRandom),
-                new("ninety-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 90)),
-                new("ninety-narrow", GenerateColourRangeGradient(colourGradientNarrow, 90)),
-                new("ninety", GenerateColourRangeGradient(colourGradientNormal, 90)),
-                new("ninety-wide", GenerateColourRangeGradient(colourGradientWide, 90)),
-                new("ninety-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 90)),
-                new("oneeighty-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 180)),
-                new("oneeighty-narrow", GenerateColourRangeGradient(colourGradientNarrow, 180)),
-                new("oneeighty", GenerateColourRangeGradient(colourGradientNormal, 180)),
-                new("oneeighty-wide", GenerateColourRangeGradient(colourGradientWide, 180)),
-                new("oneeighty-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 180))
+                new("range-cyan-very-narrow", GenerateCyanColourBand(colourGradientVeryNarrow, 0)),
+                new("range-cyan-narrow", GenerateCyanColourBand(colourGradientNarrow, 0)),
+                new("range-cyan", GenerateCyanColourBand(colourGradientNormal, 0)),
+                new("range-cyan-wide", GenerateCyanColourBand(colourGradientWide, 0)),
+                new("range-cyan-very-wide", GenerateMagentaColourBand(colourGradientVeryWide, 0)),
+                new("range-magenta-very-narrow", GenerateMagentaColourBand(colourGradientVeryNarrow, 0)),
+                new("range-magenta-narrow", GenerateMagentaColourBand(colourGradientNarrow, 0)),
+                new("range-magenta", GenerateMagentaColourBand(colourGradientNormal, 0)),
+                new("range-magenta-wide", GenerateMagentaColourBand(colourGradientWide, 0)),
+                new("range-magenta-very-wide", GenerateMagentaColourBand(colourGradientVeryWide, 0)),
+                new("gradient-090-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 90)),
+                new("gradient-090-narrow", GenerateColourRangeGradient(colourGradientNarrow, 90)),
+                new("gradient-090", GenerateColourRangeGradient(colourGradientNormal, 90)),
+                new("gradient-090-wide", GenerateColourRangeGradient(colourGradientWide, 90)),
+                new("gradient-090-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 90)),
+                new("gradient-180very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 180)),
+                new("gradient-180narrow", GenerateColourRangeGradient(colourGradientNarrow, 180)),
+                new("gradient-180", GenerateColourRangeGradient(colourGradientNormal, 180)),
+                new("gradient-180wide", GenerateColourRangeGradient(colourGradientWide, 180)),
+                new("gradient-180very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 180)),
+                new("gradient-270-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 270)),
+                new("gradient-270-narrow", GenerateColourRangeGradient(colourGradientNarrow, 270)),
+                new("gradient-270", GenerateColourRangeGradient(colourGradientNormal, 270)),
+                new("gradient-270-wide", GenerateColourRangeGradient(colourGradientWide, 270)),
+                new("gradient-270-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 270))
             };
             return returnThis;
         }

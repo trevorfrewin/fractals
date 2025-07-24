@@ -300,7 +300,7 @@ public partial class FormMain : Form
         owner.Controls.Add(colourWheelLabel);
 
         var colourWheels = new ColourWheelGenerator().GenerateColourWheels();
-        List<string> colourWheelNames = colourWheels.Select((wheel) => wheel.ColourWheelName).ToList();
+        List<string> colourWheelNames = colourWheels.OrderBy((wheel) => wheel.ColourWheelName).Select((wheel) => wheel.ColourWheelName).ToList();
         var colourWheelBox = new ComboBox
         {
             DataSource = colourWheelNames,
@@ -493,7 +493,7 @@ public partial class FormMain : Form
             Text = "Iteration Factor:",
             DecimalPlaces = 0,
             Maximum = 4,
-            Minimum = 0.5M,
+            Minimum = 1,
             Value = 1,
             Increment = 1,
             Top = iterationFactorLabel.Top - 5,
