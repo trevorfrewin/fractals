@@ -20,14 +20,6 @@ namespace tfrewin.play.fractal.start.processor
                 {
                     zx = 1.5 * (x - planeWidth / 2) / (0.5 * zoom * planeWidth) + moveX;
                     zy = 1.0 * (y - planeHeight / 2) / (0.5 * zoom * planeHeight) + moveY;
-                    i = maximumIteration;
-                    while (zx * zx + zy * zy < 4 && i > 1)
-                    {
-                        tmp = zx * zx - zy * zy + cX;
-                        zy = 2.0 * zx * zy + cY;
-                        zx = tmp;
-                        i -= 1;
-                    }
 
                     if (y == 0 && x == 0)
                     {
@@ -72,6 +64,15 @@ namespace tfrewin.play.fractal.start.processor
                     if (y == planeHeight - 1 && x == planeWidth - 1)
                     {
                         returnThis.MatrixExtents.BottomRightExtent = new Tuple<double, double>(zx, zy);
+                    }
+
+                    i = maximumIteration;
+                    while (zx * zx + zy * zy < 4 && i > 1)
+                    {
+                        tmp = zx * zx - zy * zy + cX;
+                        zy = 2.0 * zx * zy + cY;
+                        zx = tmp;
+                        i -= 1;
                     }
 
                     returnThis.Add(new Point(x, y, i));
