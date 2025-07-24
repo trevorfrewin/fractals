@@ -59,16 +59,21 @@ namespace tfrewin.play.fractal.start.utilities
             {
                 new("generated", colourWheelBase),
                 new("random", colourWheelRandom),
-                new("ninety-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 90)),
-                new("ninety-narrow", GenerateColourRangeGradient(colourGradientNarrow, 90)),
-                new("ninety", GenerateColourRangeGradient(colourGradientNormal, 90)),
-                new("ninety-wide", GenerateColourRangeGradient(colourGradientWide, 90)),
-                new("ninety-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 90)),
-                new("oneeighty-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 180)),
-                new("oneeighty-narrow", GenerateColourRangeGradient(colourGradientNarrow, 180)),
-                new("oneeighty", GenerateColourRangeGradient(colourGradientNormal, 180)),
-                new("oneeighty-wide", GenerateColourRangeGradient(colourGradientWide, 180)),
-                new("oneeighty-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 180))
+                new("gradient-090-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 90)),
+                new("gradient-090-narrow", GenerateColourRangeGradient(colourGradientNarrow, 90)),
+                new("gradient-090", GenerateColourRangeGradient(colourGradientNormal, 90)),
+                new("gradient-090-wide", GenerateColourRangeGradient(colourGradientWide, 90)),
+                new("gradient-090-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 90)),
+                new("gradient-180very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 180)),
+                new("gradient-180narrow", GenerateColourRangeGradient(colourGradientNarrow, 180)),
+                new("gradient-180", GenerateColourRangeGradient(colourGradientNormal, 180)),
+                new("gradient-180wide", GenerateColourRangeGradient(colourGradientWide, 180)),
+                new("gradient-180very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 180)),
+                new("gradient-270-very-narrow", GenerateColourRangeGradient(colourGradientVeryNarrow, 270)),
+                new("gradient-270-narrow", GenerateColourRangeGradient(colourGradientNarrow, 270)),
+                new("gradient-270", GenerateColourRangeGradient(colourGradientNormal, 270)),
+                new("gradient-270-wide", GenerateColourRangeGradient(colourGradientWide, 270)),
+                new("gradient-270-very-wide", GenerateColourRangeGradient(colourGradientVeryWide, 270))
             };
             return returnThis;
         }
