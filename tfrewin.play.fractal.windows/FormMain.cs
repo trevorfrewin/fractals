@@ -493,7 +493,7 @@ public partial class FormMain : Form
             Text = "Iteration Factor:",
             DecimalPlaces = 0,
             Maximum = 4,
-            Minimum = 0.5M,
+            Minimum = 1,
             Value = 1,
             Increment = 1,
             Top = iterationFactorLabel.Top - 5,
