@@ -20,84 +20,86 @@ public partial class FormMain : Form
         InitializeComponent();
 
         this.Text = "Fractal Play Place";
+        this.Size = new System.Drawing.Size(1500, 1000);
+
+        var splitControlBase = new SplitContainer
+        {
+            TabIndex = 0,
+            Name = "MainSplitContainer",
+            Panel1MinSize = 320,
+            Dock = DockStyle.Fill,
+            Width = this.Width
+        };
+        splitControlBase.Panel2MinSize = 1000;
 
         var layoutBox = new GroupBox
         {
-            Left = 10,
-            Text = "Layout Choices",
-            ClientSize = new System.Drawing.Size(350, 370)
+            Name = "Layout",
+            Width = 370,
+            Dock = DockStyle.Fill
         };
 
-        Label label = AddColourWheelControl(40, 20, layoutBox);
-        label = AddSetNameControl(label.Top + 40, label.Left, layoutBox);
-        label = AddOutputQualityControl(label.Top + 40, label.Left, layoutBox);
-        label = AddOutputTypeControl(label.Top + 40, label.Left, layoutBox);
-        label = AddZoomControl(label.Top + 40, label.Left, layoutBox);
-        label = AddMoveXControl(label.Top + 40, label.Left, layoutBox);
-        label = AddMoveYControl(label.Top + 40, label.Left, layoutBox);
-        label = AddIterationFactorControl(label.Top + 40, label.Left, layoutBox);
-
-        this.Controls.Add(layoutBox);
-
-        var outputBox = new GroupBox
-        {
-            Left = layoutBox.Left + layoutBox.Width + 10,
-            Text = "Output",
-            ClientSize = new System.Drawing.Size(800, 600)
-        };
-
-        var imageContainer = new PictureBox
-        {
-            Left = 20,
-            Top = 20,
-            Size = new System.Drawing.Size(760, 560),
-            SizeMode = PictureBoxSizeMode.StretchImage,
-            Name = "ImageContainer"
-        };
-        imageContainer.Click += imageContainer_Click;
-
-        outputBox.Controls.Add(imageContainer);
-        this.Controls.Add(outputBox);
+        Label label = AddColourWheelControl(30, 20, layoutBox);
+        label = AddSetNameControl(label.Top + 30, label.Left, layoutBox);
+        label = AddOutputQualityControl(label.Top + 30, label.Left, layoutBox);
+        label = AddOutputTypeControl(label.Top + 30, label.Left, layoutBox);
+        label = AddZoomControl(label.Top + 30, label.Left, layoutBox);
+        label = AddMoveXControl(label.Top + 30, label.Left, layoutBox);
+        label = AddMoveYControl(label.Top + 30, label.Left, layoutBox);
+        label = AddIterationFactorControl(label.Top + 30, label.Left, layoutBox);
 
         var buttonWidth = 80;
         var applyButton = new Button
         {
             Text = "Apply",
             Height = 40,
-            Top = layoutBox.Top + layoutBox.Height + 10,
             Width = buttonWidth,
-            Left = (layoutBox.Left + layoutBox.Width) - buttonWidth,
-            Name = "Apply"
+            Name = "Apply",
+            Top = label.Top + label.Height + 20,
+            Left = 20
         };
         applyButton.Click += applyButton_Click;
 
-        this.Controls.Add(applyButton);
+        layoutBox.Controls.Add(applyButton);
 
         var resetButton = new Button
         {
             Text = "Reset",
             Height = 40,
-            Top = applyButton.Top + applyButton.Height + 20,
             Width = buttonWidth,
             Left = applyButton.Left,
-            Name = "Reset"
+            Name = "Reset",
+            Top = applyButton.Top + applyButton.Height + 20
         };
         resetButton.Click += resetButton_Click;
 
-        this.Controls.Add(resetButton);
+        layoutBox.Controls.Add(resetButton);
 
         var saveButton = new Button
         {
             Text = "Save",
             Height = 40,
-            Top = resetButton.Top + resetButton.Height + 20,
             Width = buttonWidth,
             Left = applyButton.Left,
-            Name = "Save"
+            Name = "Save",
+            Top = resetButton.Top + resetButton.Height + 20
         };
         saveButton.Click += saveButton_Click;
 
-        this.Controls.Add(saveButton);
+        layoutBox.Controls.Add(saveButton);
+
+        var imageContainer = new PictureBox
+        {
+            Dock = DockStyle.Fill,
+            SizeMode = PictureBoxSizeMode.Zoom,
+            Name = "ImageContainer"
+        };
+        imageContainer.Click += imageContainer_Click;
+
+        splitControlBase.Panel1.Controls.Add(layoutBox);
+        splitControlBase.Panel2.Controls.Add(imageContainer);
+
+        this.Controls.Add(splitControlBase);
     }
 
     private void imageContainer_Click(object? sender, EventArgs e)
@@ -209,6 +211,12 @@ public partial class FormMain : Form
                 {
                     planeWidth *= 30;
                     planeHeight *= 30;
+                    break;
+                }
+            case "Insane":
+                {
+                    planeWidth *= 60;
+                    planeHeight *= 60;
                     break;
                 }
         }
@@ -352,7 +360,7 @@ public partial class FormMain : Form
         };
         owner.Controls.Add(outputQualityLabel);
 
-        var qualityOptions = new List<string> { "Fast", "Medium", "High Quality", "Better", "Best", "Extreme" };
+        var qualityOptions = new List<string> { "Fast", "Medium", "High Quality", "Better", "Best", "Extreme", "Insane" };
         var qualityOptionsBox = new ComboBox
         {
             DataSource = qualityOptions,
