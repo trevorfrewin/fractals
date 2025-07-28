@@ -17,8 +17,6 @@ public partial class FormMain : Form
 
     public FormMain()
     {
-        InitializeComponent();
-
         this.Text = "Fractal Play Place";
         this.Size = new System.Drawing.Size(1500, 1000);
 
@@ -59,8 +57,19 @@ public partial class FormMain : Form
             Left = 20
         };
         applyButton.Click += applyButton_Click;
-
         layoutBox.Controls.Add(applyButton);
+
+        var spinnerContainer = new PictureBox
+        {
+            Height = 40,
+            Width = 40,
+            Left = applyButton.Left + buttonWidth + 20,
+            Name = "SpinnerContainer",
+            Top = applyButton.Top + 10,
+            Visible = false
+        };
+        spinnerContainer.Load("./resources/spinner.gif");
+        layoutBox.Controls.Add(spinnerContainer);
 
         var resetButton = new Button
         {
@@ -72,7 +81,6 @@ public partial class FormMain : Form
             Top = applyButton.Top + applyButton.Height + 20
         };
         resetButton.Click += resetButton_Click;
-
         layoutBox.Controls.Add(resetButton);
 
         var saveButton = new Button
@@ -85,7 +93,6 @@ public partial class FormMain : Form
             Top = resetButton.Top + resetButton.Height + 20
         };
         saveButton.Click += saveButton_Click;
-
         layoutBox.Controls.Add(saveButton);
 
         var imageContainer = new PictureBox
@@ -100,6 +107,8 @@ public partial class FormMain : Form
         splitControlBase.Panel2.Controls.Add(imageContainer);
 
         this.Controls.Add(splitControlBase);
+
+        InitializeComponent();
     }
 
     private void imageContainer_Click(object? sender, EventArgs e)
