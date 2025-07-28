@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Linq;
+using System.Text.Json;
 using System.Windows.Forms;
 using SixLabors.ImageSharp;
 
@@ -270,6 +271,11 @@ public partial class FormMain : Form
 
     private void saveButton_Click(object? sender, EventArgs e)
     {
+        if (this._imageParameters == null)
+        {
+            return;
+        }
+
         var outputTypeControl = (ComboBox)this.Controls.Find("OutputType", true).First();
 
         var saveDialog = new SaveFileDialog();
@@ -293,6 +299,10 @@ public partial class FormMain : Form
 
             var imageBytes = (byte[])(new ImageConverter()).ConvertTo(pictureBox.Image, typeof(byte[]));
             File.WriteAllBytes(fileName, imageBytes);
+
+            var serializeOptions = new JsonSerializerOptions { WriteIndented = true };
+            var parametersJSON = JsonSerializer.Serialize(this._imageParameters, serializeOptions);
+            File.WriteAllText(fileName + ".parameters.json", parametersJSON);
         }
     }
 
