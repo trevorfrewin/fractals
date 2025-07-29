@@ -260,10 +260,12 @@ public partial class FormMain : Form
         var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
         var moveXControl = (NumericUpDown)this.Controls.Find("MoveX", true).First();
         var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
+        var outputQualityControl = (ComboBox)this.Controls.Find("OutputQuality", true).First();
 
         zoomControl.Value = 1;
         moveXControl.Value = 0;
         moveYControl.Value = 0;
+        outputQualityControl.Text = "Fast";
 
         var applyButton = (Button)this.Controls.Find("Apply", true).First();
         applyButton.PerformClick();
