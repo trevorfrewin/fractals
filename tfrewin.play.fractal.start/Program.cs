@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
@@ -22,7 +22,7 @@ namespace tfrewin.play.fractal.start
 {
     public class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             int planeWidth = 600;
             int planeHeight = 400;
@@ -82,7 +82,7 @@ namespace tfrewin.play.fractal.start
 
             var imageParameters = new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourWheelName, colourOffset);
             var engine = new MatrixEngine();
-            var matrix = engine.PopulateMatrix(imageParameters);
+            var matrix = await engine.PopulateMatrix(imageParameters);
             var results = engine.PopulateImage(imageParameters, matrix);
 
             Program.OutputFiles(results.Item1, results.Item2);

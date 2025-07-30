@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using SixLabors.ImageSharp;
 
@@ -163,7 +164,7 @@ public partial class FormMain : Form
         }
     }
 
-    private void applyButton_Click(object? sender, EventArgs e)
+    private async void applyButton_Click(object? sender, EventArgs e)
     {
         var setNameControl = (ComboBox)this.Controls.Find("SetName", true).First();
         var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
@@ -235,7 +236,7 @@ public partial class FormMain : Form
                     (int)iterationFactorControl.Value,
                     colourWheelControl.Text, 0);
 
-        var matrix = engine.PopulateMatrix(imageParameters);
+        var matrix = await engine.PopulateMatrix(imageParameters);
         //Tuple<SixLabors.ImageSharp.Image, ImageParameters> results
         var results = engine.PopulateImage(imageParameters, matrix);
 

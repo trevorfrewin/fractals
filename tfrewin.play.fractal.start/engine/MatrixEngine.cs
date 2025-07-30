@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using tfrewin.play.fractal.start.processor;
@@ -20,22 +20,28 @@ namespace tfrewin.play.fractal.start.engine
             this.ColorWheels = new ColourWheelGenerator().GenerateColourWheels();
         }
 
-        public Matrix PopulateMatrix(ImageParameters parameters)
+        public async Task<Matrix> PopulateMatrix(ImageParameters parameters)
         {
-            var colours = this.ColorWheels.Where(cw => cw.ColourWheelName.Equals(parameters.ColourWheelName)).FirstOrDefault().Colours.ToArray();
+            Matrix returnThis = null;
 
-            Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), parameters.SetName);
+            await Task.Run(() =>
+            {
+                var colours = this.ColorWheels.Where(cw => cw.ColourWheelName.Equals(parameters.ColourWheelName)).FirstOrDefault().Colours.ToArray();
 
-            var processingStopWatch = new Stopwatch();
-            processingStopWatch.Start();
+                Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), parameters.SetName);
 
-            var matrix = new FormulaProcessorFactory().Create(parameters.SetName).Process(parameters.PlaneWidth, parameters.PlaneHeight, parameters.Zoom, parameters.MoveX, parameters.MoveY, (int)(colours.Length * parameters.IterationFactor));
+                var processingStopWatch = new Stopwatch();
+                processingStopWatch.Start();
 
-            processingStopWatch.Stop();
-            parameters.ProcessingMilliseconds = processingStopWatch.ElapsedMilliseconds;
-            parameters.MatrixExtents = matrix.MatrixExtents;
+                returnThis = new FormulaProcessorFactory().Create(parameters.SetName).Process(parameters.PlaneWidth, parameters.PlaneHeight, parameters.Zoom, parameters.MoveX, parameters.MoveY, (int)(colours.Length * parameters.IterationFactor));
 
-            return matrix;
+                processingStopWatch.Stop();
+                parameters.ProcessingMilliseconds = processingStopWatch.ElapsedMilliseconds;
+                parameters.MatrixExtents = returnThis.MatrixExtents;
+
+            });
+
+            return returnThis;
         }
 
         public Tuple<Image, ImageParameters> PopulateImage(ImageParameters parameters, Matrix matrix)
