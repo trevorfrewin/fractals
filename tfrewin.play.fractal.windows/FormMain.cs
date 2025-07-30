@@ -223,9 +223,8 @@ public partial class FormMain : Form
         }
 
         var program = new tfrewin.play.fractal.start.Program();
-        Tuple<SixLabors.ImageSharp.Image, ImageParameters> results
-            = program.PaintFile(
-                new ImageParameters(
+
+        var imageParameters = new ImageParameters(
                     DateTime.UtcNow,
                     setNameControl.Text,
                     planeWidth,
@@ -234,7 +233,11 @@ public partial class FormMain : Form
                     (double)moveXControl.Value,
                     (double)moveYControl.Value,
                     (int)iterationFactorControl.Value,
-                    colourWheelControl.Text, 0));
+                    colourWheelControl.Text, 0);
+
+        var matrix = program.PopulateMatrix(imageParameters);
+        //Tuple<SixLabors.ImageSharp.Image, ImageParameters> results
+        var results = program.PopulateImage(imageParameters, matrix);
 
         this._imageParameters = results.Item2; // Has MatrixExtents on this after engine execution.
 

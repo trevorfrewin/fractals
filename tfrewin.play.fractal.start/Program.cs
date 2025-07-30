@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration.Assemblies;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -91,7 +92,10 @@ namespace tfrewin.play.fractal.start
             }
 
             var program = new Program();
-            var results = program.PaintFile(new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourWheelName, colourOffset));
+            var imageParameters = new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourWheelName, colourOffset);
+            var matrix = program.PopulateMatrix(imageParameters);
+            var results = program.PopulateImage(imageParameters, matrix);
+
             program.OutputFiles(results.Item1, results.Item2);
         }
 
@@ -190,7 +194,7 @@ namespace tfrewin.play.fractal.start
             image.SaveAsPng(imageAnnotatedPNGFilename);
         }
 
-        public Tuple<Image, ImageParameters> PaintFile(ImageParameters parameters)
+        public Matrix PopulateMatrix(ImageParameters parameters)
         {
             var colours = this.ColorWheels.Where(cw => cw.ColourWheelName.Equals(parameters.ColourWheelName)).FirstOrDefault().Colours.ToArray();
 
@@ -202,6 +206,13 @@ namespace tfrewin.play.fractal.start
             processingStopWatch.Stop();
             parameters.ProcessingMilliseconds = processingStopWatch.ElapsedMilliseconds;
             parameters.MatrixExtents = matrix.MatrixExtents;
+
+            return matrix;
+        }
+
+        public Tuple<Image, ImageParameters> PopulateImage(ImageParameters parameters, Matrix matrix)
+        {
+            var colours = this.ColorWheels.Where(cw => cw.ColourWheelName.Equals(parameters.ColourWheelName)).FirstOrDefault().Colours.ToArray();
 
             Console.WriteLine("{0} Painting ...", DateTime.UtcNow.ToString("o"));
 
