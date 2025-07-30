@@ -1,10 +1,11 @@
 using System.Drawing;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using SixLabors.ImageSharp;
 
-using tfrewin.play.fractal.start;
+using tfrewin.play.fractal.start.engine;
 using tfrewin.play.fractal.start.processor;
 using tfrewin.play.fractal.start.utilities;
 
@@ -163,7 +164,7 @@ public partial class FormMain : Form
         }
     }
 
-    private void applyButton_Click(object? sender, EventArgs e)
+    private async void applyButton_Click(object? sender, EventArgs e)
     {
         var setNameControl = (ComboBox)this.Controls.Find("SetName", true).First();
         var zoomControl = (NumericUpDown)this.Controls.Find("Zoom", true).First();
@@ -222,10 +223,9 @@ public partial class FormMain : Form
                 }
         }
 
-        var program = new tfrewin.play.fractal.start.Program();
-        Tuple<SixLabors.ImageSharp.Image, ImageParameters> results
-            = program.PaintFile(
-                new ImageParameters(
+        var engine = new tfrewin.play.fractal.start.engine.MatrixEngine();
+
+        var imageParameters = new ImageParameters(
                     DateTime.UtcNow,
                     setNameControl.Text,
                     planeWidth,
@@ -234,7 +234,11 @@ public partial class FormMain : Form
                     (double)moveXControl.Value,
                     (double)moveYControl.Value,
                     (int)iterationFactorControl.Value,
-                    colourWheelControl.Text, 0));
+                    colourWheelControl.Text, 0);
+
+        var matrix = await engine.PopulateMatrix(imageParameters);
+        //Tuple<SixLabors.ImageSharp.Image, ImageParameters> results
+        var results = engine.PopulateImage(imageParameters, matrix);
 
         this._imageParameters = results.Item2; // Has MatrixExtents on this after engine execution.
 
