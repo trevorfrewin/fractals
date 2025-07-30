@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using tfrewin.play.fractal.start.processor;
-using tfrewin.play.fractal.start.processor.output;
+using tfrewin.play.fractal.start.engine;
 using tfrewin.play.fractal.start.utilities;
 
 /*
@@ -25,14 +22,7 @@ namespace tfrewin.play.fractal.start
 {
     public class Program
     {
-        private List<ColourWheel> ColorWheels;
-
-        public Program()
-        {
-            this.ColorWheels = new ColourWheelGenerator().GenerateColourWheels();
-        }
-
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             int planeWidth = 600;
             int planeHeight = 400;
@@ -90,17 +80,42 @@ namespace tfrewin.play.fractal.start
                 moveY = double.Parse(args.First(a => a.ToLower().StartsWith("movey=")).ToLower().Replace("movey=", string.Empty));
             }
 
-            var program = new Program();
-            var results = program.PaintFile(new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourWheelName, colourOffset));
-            program.OutputFiles(results.Item1, results.Item2);
+            var imageParameters = new ImageParameters(DateTime.UtcNow, setName, planeWidth, planeHeight, zoom, moveX, moveY, iterationFactor, colourWheelName, colourOffset);
+            var engine = new MatrixEngine();
+            var matrix = await engine.PopulateMatrix(imageParameters);
+            var results = engine.PopulateImage(imageParameters, matrix);
+
+            Program.OutputFiles(results.Item1, results.Item2);
         }
 
-        private Matrix GetMatrixForFormula(string setName, int planeWidth, int planeHeight, double zoom, double moveX, double moveY, int maximumIteration)
+        public static void OutputFiles(Image image, ImageParameters parameters)
         {
-            return new FormulaProcessorFactory().Create(setName).Process(planeWidth, planeHeight, zoom, moveX, moveY, maximumIteration);
+            var filename = string.Format("{0}-{1}.output", parameters.SetName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
+            var imagePNGFilename = string.Concat(filename, ".png");
+            Console.WriteLine("Saving PNG '{0}' ...", imagePNGFilename);
+            image.SaveAsPng(imagePNGFilename);
+            parameters.ImageFilenames.Add(imagePNGFilename);
+
+            var imageJPGFilename = string.Concat(filename, ".jpg");
+            Console.WriteLine("Saving JPG '{0}' ...", imageJPGFilename);
+            image.SaveAsJpeg(imageJPGFilename);
+            parameters.ImageFilenames.Add(imageJPGFilename);
+
+            var parametersFilename = string.Concat(filename, ".json");
+            Console.WriteLine("Saving Parameters '{0}' ...", parametersFilename);
+
+            var imageAnnotatedPNGFilename = string.Concat(filename, ".annotated.png");
+            parameters.ImageFilenames.Add(imageAnnotatedPNGFilename);
+
+            var parametersContent = JsonConvert.SerializeObject(parameters, Formatting.Indented);
+            File.WriteAllText(parametersFilename, parametersContent);
+
+            AnnotateImage(image, parameters);
+            Console.WriteLine("Saving Annotated PNG '{0}' ...", imageAnnotatedPNGFilename);
+            image.SaveAsPng(imageAnnotatedPNGFilename);
         }
 
-        private void AnnotateImage(Image original, ImageParameters parameters)
+        private static void AnnotateImage(Image original, ImageParameters parameters)
         {
             const float TextPadding = 6f;
             const string TextFont = "Arial";
@@ -161,74 +176,6 @@ namespace tfrewin.play.fractal.start
                     new Color(Rgba32.ParseHex("#06121DFF")),
                     new PointF(TextPadding, TextPadding)));
             }
-        }
-
-        public void OutputFiles(Image image, ImageParameters parameters)
-        {
-            var filename = string.Format("{0}-{1}.output", parameters.SetName, DateTime.UtcNow.ToString("o").Replace(":", string.Empty).Replace(".", string.Empty));
-            var imagePNGFilename = string.Concat(filename, ".png");
-            Console.WriteLine("Saving PNG '{0}' ...", imagePNGFilename);
-            image.SaveAsPng(imagePNGFilename);
-            parameters.ImageFilenames.Add(imagePNGFilename);
-
-            var imageJPGFilename = string.Concat(filename, ".jpg");
-            Console.WriteLine("Saving JPG '{0}' ...", imageJPGFilename);
-            image.SaveAsJpeg(imageJPGFilename);
-            parameters.ImageFilenames.Add(imageJPGFilename);
-
-            var parametersFilename = string.Concat(filename, ".json");
-            Console.WriteLine("Saving Parameters '{0}' ...", parametersFilename);
-
-            var imageAnnotatedPNGFilename = string.Concat(filename, ".annotated.png");
-            parameters.ImageFilenames.Add(imageAnnotatedPNGFilename);
-
-            var parametersContent = JsonConvert.SerializeObject(parameters, Formatting.Indented);
-            File.WriteAllText(parametersFilename, parametersContent);
-
-            AnnotateImage(image, parameters);
-            Console.WriteLine("Saving Annotated PNG '{0}' ...", imageAnnotatedPNGFilename);
-            image.SaveAsPng(imageAnnotatedPNGFilename);
-        }
-
-        public Tuple<Image, ImageParameters> PaintFile(ImageParameters parameters)
-        {
-            var colours = this.ColorWheels.Where(cw => cw.ColourWheelName.Equals(parameters.ColourWheelName)).FirstOrDefault().Colours.ToArray();
-
-            Console.WriteLine("{0} - Processing for '{1}' ...", DateTime.UtcNow.ToString("o"), parameters.SetName);
-
-            var processingStopWatch = new Stopwatch();
-            processingStopWatch.Start();
-            var matrix = this.GetMatrixForFormula(parameters.SetName, parameters.PlaneWidth, parameters.PlaneHeight, parameters.Zoom, parameters.MoveX, parameters.MoveY, (int)(colours.Length * parameters.IterationFactor));
-            processingStopWatch.Stop();
-            parameters.ProcessingMilliseconds = processingStopWatch.ElapsedMilliseconds;
-            parameters.MatrixExtents = matrix.MatrixExtents;
-
-            Console.WriteLine("{0} Painting ...", DateTime.UtcNow.ToString("o"));
-
-            var paintingStopWatch = new Stopwatch();
-            paintingStopWatch.Start();
-
-            Image<Rgba32> image = new(parameters.PlaneWidth, parameters.PlaneHeight);
-            foreach (var point in matrix)
-            {
-                int colourPoint = 0;
-
-                if (point.IterationCount > 0)
-                {
-                    colourPoint = (int)(point.IterationCount / parameters.IterationFactor) + parameters.ColourOffset;
-
-                    while (colourPoint >= colours.Length)
-                    {
-                        colourPoint -= colours.Length;
-                    }
-                }
-
-                image[point.XAxisValue, point.YAxisValue] = colours[colourPoint];
-            }
-            paintingStopWatch.Stop();
-            parameters.PaintMilliseconds = paintingStopWatch.ElapsedMilliseconds;
-
-            return new Tuple<Image, ImageParameters>(image, parameters);
         }
     }
 }

@@ -121,7 +121,7 @@ namespace tfrewin.play.fractal.start.utilities
                 new("range-cyan-narrow", GenerateCyanColourBand(colourGradientNarrow, 0)),
                 new("range-cyan", GenerateCyanColourBand(colourGradientNormal, 0)),
                 new("range-cyan-wide", GenerateCyanColourBand(colourGradientWide, 0)),
-                new("range-cyan-very-wide", GenerateMagentaColourBand(colourGradientVeryWide, 0)),
+                new("range-cyan-very-wide", GenerateCyanColourBand(colourGradientVeryWide, 0)),
                 new("range-magenta-very-narrow", GenerateMagentaColourBand(colourGradientVeryNarrow, 0)),
                 new("range-magenta-narrow", GenerateMagentaColourBand(colourGradientNarrow, 0)),
                 new("range-magenta", GenerateMagentaColourBand(colourGradientNormal, 0)),

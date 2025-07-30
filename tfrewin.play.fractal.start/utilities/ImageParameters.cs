@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using tfrewin.play.fractal.start.processor.output;
 
-namespace tfrewin.play.fractal.start
+namespace tfrewin.play.fractal.start.utilities
 {
     public class ImageParameters
     {
