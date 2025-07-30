@@ -183,6 +183,9 @@ public partial class FormMain : Form
         var moveYControl = (NumericUpDown)this.Controls.Find("MoveY", true).First();
         var iterationFactorControl = (NumericUpDown)this.Controls.Find("IterationFactor", true).First();
         var colourWheelControl = (ComboBox)this.Controls.Find("ColourWheel", true).First();
+        var spinnerControl = (PictureBox)this.Controls.Find("SpinnerContainer", true).First();
+
+        spinnerControl.Visible = true;
 
         var planeWidth = 300;
         var planeHeight = 200;
@@ -266,6 +269,8 @@ public partial class FormMain : Form
         var image = System.Drawing.Image.FromStream(interimStream);
         var pictureBox = (PictureBox)this.Controls.Find("ImageContainer", true).First();
         pictureBox.Image = image;
+
+        spinnerControl.Visible = false;
     }
 
     private void resetButton_Click(object? sender, EventArgs e)
