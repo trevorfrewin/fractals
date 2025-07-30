@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Windows.Forms;
 using SixLabors.ImageSharp;
 
-using tfrewin.play.fractal.start;
+using tfrewin.play.fractal.start.engine;
 using tfrewin.play.fractal.start.processor;
 using tfrewin.play.fractal.start.utilities;
 
@@ -222,7 +222,7 @@ public partial class FormMain : Form
                 }
         }
 
-        var program = new tfrewin.play.fractal.start.Program();
+        var engine = new tfrewin.play.fractal.start.engine.MatrixEngine();
 
         var imageParameters = new ImageParameters(
                     DateTime.UtcNow,
@@ -235,9 +235,9 @@ public partial class FormMain : Form
                     (int)iterationFactorControl.Value,
                     colourWheelControl.Text, 0);
 
-        var matrix = program.PopulateMatrix(imageParameters);
+        var matrix = engine.PopulateMatrix(imageParameters);
         //Tuple<SixLabors.ImageSharp.Image, ImageParameters> results
-        var results = program.PopulateImage(imageParameters, matrix);
+        var results = engine.PopulateImage(imageParameters, matrix);
 
         this._imageParameters = results.Item2; // Has MatrixExtents on this after engine execution.
 
