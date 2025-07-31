@@ -13,6 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-      <EmbeddedResource Include="./resources/*.gif" />
+      <EmbeddedResource Include="./resources/*.gif">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
   </ItemGroup>
 </Project>
