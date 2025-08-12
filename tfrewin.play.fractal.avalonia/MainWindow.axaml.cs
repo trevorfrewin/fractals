@@ -1,4 +1,3 @@
-
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -16,6 +15,8 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace tfrewin.play.fractal.avalonia;
 
@@ -156,6 +157,11 @@ public partial class MainWindow : Window
                 ms.Seek(0, SeekOrigin.Begin);
                 File.WriteAllBytes(filePath, ms.ToArray());
             }
+
+            // Save parameters as JSON
+            var serializeOptions = new JsonSerializerOptions { WriteIndented = true };
+            var parametersJSON = JsonSerializer.Serialize(this._imageParameters, serializeOptions);
+            File.WriteAllText(filePath + ".parameters.json", parametersJSON);
         }
     }
 
