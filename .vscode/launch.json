@@ -102,6 +102,18 @@
             "stopAtEntry": false
         },
         {
+            "name": "Avalonia Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-avalonia",
+            "program": "${workspaceFolder}/tfrewin.play.fractal.avalonia/bin/Debug/net9.0/tfrewin.play.fractal.avalonia.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/tfrewin.play.fractal.avalonia",
+            "console": "integratedTerminal",
+            "requireExactSource": true,
+            "stopAtEntry": false
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
