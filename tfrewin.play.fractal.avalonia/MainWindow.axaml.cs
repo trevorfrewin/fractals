@@ -159,7 +159,65 @@ public partial class MainWindow : Window
 
     private void FractalImage_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {
-        // Placeholder for zoom/move logic on image click
-        // You can implement similar logic as in the WinForms version if desired
+        if (_imageParameters == null)
+        {
+            var msgBox = new Window { Title = "Info", Width = 300, Height = 100, Content = new TextBlock { Text = "Please Apply or Reset the form.", VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center } };
+            msgBox.ShowDialog(this);
+            return;
+        }
+
+        try
+        {
+            // Get controls
+            var zoomAmount = ZoomBox.Value ?? 1;
+            var moveXAmount = MoveXBox.Value ?? 0;
+            var moveYAmount = MoveYBox.Value ?? 0;
+
+            // Mouse button logic
+            var props = e.GetCurrentPoint(FractalImage);
+            if (props.Properties.IsLeftButtonPressed)
+            {
+                zoomAmount *= 2;
+            }
+            else if (props.Properties.IsRightButtonPressed)
+            {
+                zoomAmount /= 2;
+            }
+            ZoomBox.Value = zoomAmount;
+
+            // Matrix extents
+            var extents = _imageParameters.MatrixExtents;
+            var maxX = extents.BottomRightExtent.Item1;
+            var maxY = extents.TopLeftExtent.Item2;
+            var minX = extents.TopLeftExtent.Item1;
+            var minY = extents.BottomRightExtent.Item2;
+
+            var spanX = maxX - minX;
+            var spanY = maxY - minY;
+
+            // Get pointer position relative to image
+            var pt = e.GetPosition(FractalImage);
+            var imgWidth = FractalImage.Bounds.Width;
+            var imgHeight = FractalImage.Bounds.Height;
+            var portionX = pt.X / imgWidth;
+            var portionY = pt.Y / imgHeight;
+
+            var changeX = spanX * portionX;
+            var changeY = spanY * portionY;
+
+            var xOffset = minX + changeX;
+            var yOffset = maxY - changeY;
+
+            MoveXBox.Value = (decimal)xOffset;
+            MoveYBox.Value = (decimal)yOffset;
+
+            // Trigger Apply
+            ApplyButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        }
+        catch (Exception)
+        {
+            var msgBox = new Window { Title = "Error", Width = 300, Height = 100, Content = new TextBlock { Text = "Something failed in rendering. Zoomed in or out too far?", VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center } };
+            msgBox.ShowDialog(this);
+        }
     }
 }

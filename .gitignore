@@ -16,6 +16,7 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!.vscode/*.code-workspace
 ##
 ## Output files from execution
 ##
@@ -23,3 +24,8 @@
 *.output.json
 *.output.jpg
 *.annotated.*
+##
+## Avalonia UI (has a tendency to place images in the code root folder)
+##
+tfrewin.play.fractal.avalonia/*.png
+tfrewin.play.fractal.avalonia/*.jpg
