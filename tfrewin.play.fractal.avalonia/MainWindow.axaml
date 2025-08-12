@@ -8,7 +8,6 @@
     <Grid ColumnDefinitions="Auto,*" RowDefinitions="*">
         <!-- Controls Panel -->
         <StackPanel Grid.Column="0" Margin="16" Width="350" Spacing="12">
-            <TextBlock Text="Fractal Controls" FontWeight="Bold" FontSize="20" Margin="0,0,0,12"/>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="Colour Wheel:" Width="120"/>
                 <ComboBox Name="ColourWheelBox" Width="180"/>
