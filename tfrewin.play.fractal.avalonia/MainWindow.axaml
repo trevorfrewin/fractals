@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="tfrewin.play.fractal.avalonia.MainWindow"
+        Title="Fractal Play Place">
+    <Grid ColumnDefinitions="Auto,*" RowDefinitions="*">
+        <!-- Controls Panel -->
+        <StackPanel Grid.Column="0" Margin="16" Width="350" Spacing="12">
+            <TextBlock Text="Fractal Controls" FontWeight="Bold" FontSize="20" Margin="0,0,0,12"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Colour Wheel:" Width="120"/>
+                <ComboBox Name="ColourWheelBox" Width="180"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Fractal Set:" Width="120"/>
+                <ComboBox Name="SetNameBox" Width="180"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Output Quality:" Width="120"/>
+                <ComboBox Name="OutputQualityBox" Width="180"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Output Type:" Width="120"/>
+                <ComboBox Name="OutputTypeBox" Width="180"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Zoom:" Width="120"/>
+                <NumericUpDown Name="ZoomBox" Width="180" Minimum="0.1" Maximum="900000000000000" Increment="0.1" Value="1"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Move X:" Width="120"/>
+                <NumericUpDown Name="MoveXBox" Width="180" Minimum="-8" Maximum="8" Increment="0.01" Value="0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Move Y:" Width="120"/>
+                <NumericUpDown Name="MoveYBox" Width="180" Minimum="-8" Maximum="8" Increment="0.01" Value="0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Iteration Factor:" Width="120"/>
+                <NumericUpDown Name="IterationFactorBox" Width="180" Minimum="1" Maximum="4" Increment="1" Value="1"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,16,0,0">
+                <Button Name="ApplyButton" Content="Apply" Width="80"/>
+                <Button Name="ResetButton" Content="Reset" Width="80"/>
+                <Button Name="SaveButton" Content="Save" Width="80"/>
+            </StackPanel>
+            <ProgressBar Name="ProgressBar" Width="180" Height="20" IsVisible="False" Margin="0,8,0,0" IsIndeterminate="True"/>
+        </StackPanel>
+        <!-- Image Display -->
+        <Border Grid.Column="1" Margin="8" Background="#222" CornerRadius="8">
+            <Image Name="FractalImage" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand"/>
+        </Border>
+    </Grid>
+</Window>
