@@ -29,3 +29,4 @@
 ##
 tfrewin.play.fractal.avalonia/*.png
 tfrewin.play.fractal.avalonia/*.jpg
+tfrewin.play.fractal.avalonia/*.parameters.json
