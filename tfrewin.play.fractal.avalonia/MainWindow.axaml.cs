@@ -77,7 +77,6 @@ public partial class MainWindow : Window
             case "Insane": planeWidth *= 60; planeHeight *= 60; break;
         }
 
-
         var parameters = new ImageParameters(
             DateTime.UtcNow,
             SetNameBox.SelectedItem?.ToString() ?? "mandelbrot",
@@ -134,8 +133,19 @@ public partial class MainWindow : Window
             Height = 120,
             Title = "Save Fractal Image"
         };
-        var textBox = new TextBox { Width = 350, Margin = new Thickness(10), Text = $"fractal.{(OutputTypeBox.SelectedItem?.ToString() ?? "png").ToLower()}" };
-        var okButton = new Button { Content = "Save", Width = 80, Margin = new Thickness(10) };
+        var filenamePrefix = DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "_" + SetNameBox.SelectedItem?.ToString() ?? "mandelbrot";
+        var textBox = new TextBox
+        {
+            Width = 350,
+            Margin = new Thickness(10),
+            Text = $"{filenamePrefix}.{(OutputTypeBox.SelectedItem?.ToString() ?? "png").ToLower()}"
+        };
+        var okButton = new Button
+        {
+            Content = "Save",
+            Width = 80,
+            Margin = new Thickness(10)
+        };
         var panel = new StackPanel();
         panel.Children.Add(textBox);
         panel.Children.Add(okButton);
@@ -168,7 +178,13 @@ public partial class MainWindow : Window
     {
         if (_imageParameters == null)
         {
-            var msgBox = new Window { Title = "Info", Width = 300, Height = 100, Content = new TextBlock { Text = "Please Apply or Reset the form.", VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center } };
+            var msgBox = new Window
+            {
+                Title = "Info",
+                Width = 300,
+                Height = 100,
+                Content = new TextBlock { Text = "Please Apply or Reset the form.", VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
+            };
             msgBox.ShowDialog(this);
             return;
         }
@@ -223,7 +239,13 @@ public partial class MainWindow : Window
         }
         catch (Exception)
         {
-            var msgBox = new Window { Title = "Error", Width = 300, Height = 100, Content = new TextBlock { Text = "Something failed in rendering. Zoomed in or out too far?", VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center } };
+            var msgBox = new Window
+            {
+                Title = "Error",
+                Width = 300,
+                Height = 100,
+                Content = new TextBlock { Text = "Something failed in rendering. Zoomed in or out too far?", VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
+            };
             msgBox.ShowDialog(this);
         }
     }
