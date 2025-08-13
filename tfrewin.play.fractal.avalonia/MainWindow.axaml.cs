@@ -2,8 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using Avalonia.Controls.Platform;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,13 +14,14 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace tfrewin.play.fractal.avalonia;
 
 public partial class MainWindow : Window
 {
     private ImageParameters? _imageParameters;
+    private SixLabors.ImageSharp.Image? _image;
+
     private MatrixEngine _engine = new();
 
     public MainWindow()
@@ -93,8 +92,8 @@ public partial class MainWindow : Window
 
         var matrix = await _engine.PopulateMatrix(parameters);
         var results = _engine.PopulateImage(parameters, matrix);
+        _image = results.Item1;
         _imageParameters = results.Item2;
-
 
         using var ms = new MemoryStream();
         var imgSharp = results.Item1 as Image<Rgba32>;
@@ -147,13 +146,13 @@ public partial class MainWindow : Window
         if (!string.IsNullOrWhiteSpace(filePath))
         {
             using var ms = new MemoryStream();
-            var imgSharp2 = _engine.PopulateImage(_imageParameters, await _engine.PopulateMatrix(_imageParameters)).Item1 as Image<Rgba32>;
-            if (imgSharp2 != null)
+
+            if (_image != null)
             {
                 if ((OutputTypeBox.SelectedItem?.ToString() ?? "PNG") == "PNG")
-                    imgSharp2.Save(ms, new PngEncoder());
+                    _image.Save(ms, new PngEncoder());
                 else
-                    imgSharp2.Save(ms, new JpegEncoder());
+                    _image.Save(ms, new JpegEncoder());
                 ms.Seek(0, SeekOrigin.Begin);
                 File.WriteAllBytes(filePath, ms.ToArray());
             }
