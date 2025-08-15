@@ -6,15 +6,12 @@ namespace tfrewin.play.fractal.start.processor
     {
         public IFormulaProcesor Create(string formulaName)
         {
-            switch(formulaName)
+            return formulaName switch
             {
-                case "julia" :
-                    return new JuliaSetProcessor();
-                case "mandelbrot" :
-                    return new MandelbrotSetProcessor();
-                default:
-                    throw new ArgumentException(string.Format("Formula '{0}' is not supported."));
-            }
+                "Julia" => new JuliaSetProcessor(),
+                "Mandelbrot" => new MandelbrotSetProcessor(),
+                _ => throw new ArgumentException(string.Format("Formula '{0}' is not supported.", formulaName)),
+            };
         }
     }
 }
