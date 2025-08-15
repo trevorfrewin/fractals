@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using tfrewin.play.fractal.start.engine;
 using tfrewin.play.fractal.start.utilities;
@@ -35,22 +36,20 @@ public partial class MainWindow : Window
 
     private void InitializeControls()
     {
-        // Populate ComboBoxes
         var colourWheels = new ColourWheelGenerator().GenerateColourWheels();
-
-        ColourWheelBox.ItemsSource = colourWheels.Select(cw => cw.ColourWheelName).ToList();
+        var sortedColourWheelNames = colourWheels.Select(cw => cw.ColourWheelName).OrderBy(name => name).ToList();
+        ColourWheelBox.ItemsSource = sortedColourWheelNames;
         ColourWheelBox.SelectedIndex = 0;
 
-        SetNameBox.ItemsSource = new List<string> { "mandelbrot", "julia" };
+        SetNameBox.ItemsSource = new List<string> { "Mandelbrot", "Julia" };
         SetNameBox.SelectedIndex = 0;
 
-        OutputQualityBox.ItemsSource = new List<string> { "Fast", "Medium", "High Quality", "Better", "Best", "Extreme", "Insane" };
+        OutputQualityBox.ItemsSource = new List<string> { "Fast", "Medium", "FHD", "QHD", "High Quality", "Superb", "Ridiculous", "Ludicrous", "Plaid" };
         OutputQualityBox.SelectedIndex = 0;
 
         OutputTypeBox.ItemsSource = new List<string> { "JPG", "PNG" };
         OutputTypeBox.SelectedIndex = 0;
 
-        // Button events
         ApplyButton.Click += ApplyButton_Click;
         ResetButton.Click += ResetButton_Click;
         SaveButton.Click += SaveButton_Click;
@@ -70,16 +69,18 @@ public partial class MainWindow : Window
         {
             case "Fast": break;
             case "Medium": planeWidth *= 3; planeHeight *= 3; break;
+            case "FHD": planeWidth = 1920; planeHeight = 1080; break;
+            case "QHD": planeWidth = 2560; planeHeight = 1440; break;
             case "High Quality": planeWidth *= 8; planeHeight *= 8; break;
-            case "Better": planeWidth *= 15; planeHeight *= 15; break;
-            case "Best": planeWidth *= 20; planeHeight *= 20; break;
-            case "Extreme": planeWidth *= 30; planeHeight *= 30; break;
-            case "Insane": planeWidth *= 60; planeHeight *= 60; break;
+            case "Superb": planeWidth *= 10; planeHeight *= 10; break;
+            case "Ridiculous": planeWidth *= 20; planeHeight *= 20; break;
+            case "Ludicrous": planeWidth *= 40; planeHeight *= 40; break;
+            case "Plaid": planeWidth *= 80; planeHeight *= 80; break;
         }
 
         var parameters = new ImageParameters(
             DateTime.UtcNow,
-            SetNameBox.SelectedItem?.ToString() ?? "mandelbrot",
+            SetNameBox.SelectedItem?.ToString() ?? "Mandelbrot",
             planeWidth,
             planeHeight,
             (double)(ZoomBox.Value ?? 1),
@@ -126,14 +127,18 @@ public partial class MainWindow : Window
         if (_imageParameters == null || FractalImage.Source == null)
             return;
 
-        // Fallback: prompt for file path using a simple dialog
         var dialog = new Window
         {
             Width = 400,
             Height = 120,
             Title = "Save Fractal Image"
         };
-        var filenamePrefix = DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "_" + SetNameBox.SelectedItem?.ToString() ?? "mandelbrot";
+        var filenamePrefix = new StringBuilder();
+        filenamePrefix.Append(DateTime.UtcNow.ToString("yyyyMMddHHmmss"))
+            .Append('_')
+            .Append(SetNameBox.SelectedItem?.ToString() ?? "Mandelbrot")
+            .Append('_')
+            .Append(ColourWheelBox.SelectedItem?.ToString() ?? "Colour");
         var textBox = new TextBox
         {
             Width = 350,
@@ -171,6 +176,31 @@ public partial class MainWindow : Window
             var serializeOptions = new JsonSerializerOptions { WriteIndented = true };
             var parametersJSON = JsonSerializer.Serialize(this._imageParameters, serializeOptions);
             File.WriteAllText(filePath + ".parameters.json", parametersJSON);
+
+            var msgBox = new Window
+            {
+                Title = "Closes in 15 seconds",
+                Width = 300,
+                Height = 100,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                CanResize = false,
+                Content = new StackPanel {
+                    Children = {
+                        new TextBlock {
+                            Text = "Save Complete!",
+                            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+                            FontSize = 18,
+                            Margin = new Thickness(10)
+                        }
+                    }
+                }
+            };
+            var _ = Task.Run(async () => {
+                await Task.Delay(15000);
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() => msgBox.Close());
+            });
+            await msgBox.ShowDialog(this);
         }
     }
 
