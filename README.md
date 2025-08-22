@@ -158,22 +158,27 @@ Experiment with different color wheels to change the appearance of the fractal. 
 
 1. In VSCode, open the `.vscode/launch.json` file (if present) to review or customize the debug and run configurations.
 2. Ensure the launch configuration points to the correct project (e.g., `tfrewin.play.fractal.avalonia` for the UI).
-3. You can start debugging by pressing `F5` or selecting "Run and Debug" from the sidebar.
+3. You can build and run the application in two ways:
+
+- **Using the launch.json options:** Press `F5` or select "Run and Debug" from the sidebar to use the configured launch profiles for building and running the project.
+- **Using the command line:** Follow the manual build and run instructions provided below to use the terminal directly.
 
 #### Building and Running (Debug Mode)
 
+You can build and run the application either using the launch.json options (see above), or manually from the command line as follows:
+
 1. Open the integrated terminal in VSCode.
-2. Build the project:
+1. Build the project:
 
-    ```bash
-    dotnet build tfrewin.play.fractal.avalonia/tfrewin.play.fractal.avalonia.csproj
-    ```
+  ```bash
+  dotnet build tfrewin.play.fractal.avalonia/tfrewin.play.fractal.avalonia.csproj
+  ```
 
-3. Run the application:
+1. Run the application:
 
-    ```bash
-    dotnet run --project tfrewin.play.fractal.avalonia/tfrewin.play.fractal.avalonia.csproj
-    ```
+  ```bash
+  dotnet run --project tfrewin.play.fractal.avalonia/tfrewin.play.fractal.avalonia.csproj
+  ```
 
 ## Building and Running a Release Version
 
@@ -217,7 +222,7 @@ This project is split into two main components:
 
 - **Frontend (`tfrewin.play.fractal.avalonia`)**: Provides the interactive user interface, allowing users to select fractal types, zoom, adjust parameters, and visualize the results. The frontend communicates with the backend to request fractal data and then renders the resulting images for the user. It is built with Avalonia for cross-platform desktop support.
 
-#### Component Interaction Diagram
+#### Component Interaction Diagram (of sorts)
 
 ```mermaid
 flowchart LR
