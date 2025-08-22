@@ -44,6 +44,30 @@ Fractals have practical applications in many fields, including computer graphics
 
 ## This play set
 
+### Output Quality and UI Responsiveness
+
+The **OutputQuality** setting has a significant impact on the responsiveness of the UI and the speed at which fractal images are generated:
+
+- **Fast** and **Medium** quality settings produce images quickly, allowing for smooth navigation and rapid exploration of fractals. These are recommended for slower machines or when you want to quickly zoom and pan through the fractal space.
+- **High** and **Extreme** quality settings generate more detailed and visually rich images, but require much more processing time. Even on fast machines, rendering at these levels can take several seconds or more, especially at high zoom levels or with large image sizes.
+
+**Tips:**
+
+- On slower computers, use Fast or Medium quality to navigate, then switch to a higher quality for your final image.
+- On powerful hardware, you can use higher quality settings more often, but expect some delay at the most detailed levels.
+
+In general, increasing OutputQuality increases the number of iterations and the resolution of the image, which directly affects how long it takes to process and display the fractal.
+
+### Saving Images and Description Files
+
+When you save a fractal image from the application, a JSON description file is created alongside the image file. This JSON file has the same filename as the image, but with a `.json` extension (for example, `fractal-image.png` and `fractal-image.png.json`).
+
+The description file contains all the parameters used to generate the image, such as fractal type, zoom level, position, color settings, and OutputQuality. You can use this file to return to the exact same view later, share your fractal setup with others, or automate the regeneration of images with the same parameters.
+
+**How to use:**
+
+- To revisit a saved fractal, simply load the corresponding JSON file in the application. The UI will update to match the saved parameters, allowing you to continue exploring or export the image again.
+
 This application provides an interactive UI for exploring fractals. Here’s how to use it:
 
 ### Selecting the Fractal Type
