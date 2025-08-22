@@ -33,6 +33,12 @@
 
 ## Introduction
 
+This project is a multi-platform fractal explorer and generator, designed to run efficiently on Windows, Linux, and macOS. It leverages the cross-platform [SixLabors](https://sixlabors.com/) library for high-performance image processing (that is also platform independent), and uses [Avalonia](https://avaloniaui.net/) as the UI engine to provide a responsive, native-feeling desktop experience on any supported OS.
+
+Because fractal images can be extremely large and computationally intensive—sometimes involving millions of calculations per image—this application is built to run entirely on your local machine. This ensures you get the best possible performance and responsiveness, regardless of your internet connection or cloud resources.
+
+You can save your fractal creations as PNG or JPG files, at any size you choose to generate. This makes it easy to create high-resolution artwork, share your discoveries, or revisit and refine your favourite fractal views.
+
 ## More info on Fractals
 
 Fractals are infinitely complex patterns that are self-similar across different scales. They are created by repeating a simple process over and over in an ongoing feedback loop. Driven by recursion, fractals are images of dynamic systems – the pictures of Chaos. Geometrically, they exist in between our familiar dimensions. Fractals are not just mathematical curiosities; they are found throughout nature, in coastlines, mountains, clouds, plants, and even in the branching of trees and blood vessels.
