@@ -1,5 +1,36 @@
 # Playing with Fractals
 
+## Table of Contents
+
+- [Introduction](#introduction)
+- [More info on Fractals](#more-info-on-fractals)
+  - [The Cartesian Plane and Iterations](#the-cartesian-plane-and-iterations)
+  - [Going Deeply into Sets](#going-deeply-into-sets)
+    - [Mandelbrot Set](#mandelbrot-set)
+    - [Julia Set](#julia-set)
+  - [Fractals in Nature and Science](#fractals-in-nature-and-science)
+  - [Iteration, Zoom, and Infinite Detail](#iteration-zoom-and-infinite-detail)
+  - [Coloring and Visualization](#coloring-and-visualization)
+  - [Applications of Fractals](#applications-of-fractals)
+  - [Further Reading](#further-reading)
+- [This play set](#this-play-set)
+  - [Output Quality and UI Responsiveness](#output-quality-and-ui-responsiveness)
+  - [Saving Images and Description Files](#saving-images-and-description-files)
+  - [Selecting the Fractal Type](#selecting-the-fractal-type)
+  - [Zooming In and Out](#zooming-in-and-out)
+  - [Adjusting Parameters Manually](#adjusting-parameters-manually)
+  - [Color Wheels and Visualization](#color-wheels-and-visualization)
+- [Compiling and Running this Code](#compiling-and-running-this-code)
+  - [Prerequisites](#prerequisites)
+  - [Reviewing the Launch Configuration](#reviewing-the-launch-configuration)
+  - [Building and Running (Debug Mode)](#building-and-running-debug-mode)
+- [Building and Running a Release Version](#building-and-running-a-release-version)
+  - [Steps to Build and Run in Release Mode](#steps-to-build-and-run-in-release-mode)
+  - [Why Release Mode is Faster](#why-release-mode-is-faster)
+- ['Server'/Platform Independent Functions](#serverplatform-independent-functions)
+- [Architecture: Backend and Frontend Responsibilities](#architecture-backend-and-frontend-responsibilities)
+  - [Component Interaction Diagram](#component-interaction-diagram)
+
 ## Introduction
 
 ## More info on Fractals
