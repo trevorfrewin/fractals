@@ -151,6 +151,12 @@ Upon launching the application, you will see options to select the type of fract
 
 You can also fine-tune the fractal by entering values directly into the parameter fields in the UI. These fields may include zoom level, position (X/Y), iteration count, and color settings. After adjusting the numbers, press Enter or click the update button to refresh the image with the new parameters.
 
+### UI Button Functions
+
+- **Apply:** Applies the current settings and generates a new fractal image based on the selected parameters (fractal type, zoom, color wheel, etc.). Use this button after changing any settings to update the display.
+- **Reset:** Restores the position and zoom parameters to their default values, allowing you to quickly return to the initial view of a Fractal (in case you get lost or wish to start a new exploration from scratch).
+- **Save:** Opens a dialog to save the currently displayed fractal image to your computer. This also saves a corresponding parameters JSON file, so you can reproduce or share the exact same fractal view later.
+
 ### Color Wheels and Visualization
 
 Experiment with different color wheels to change the appearance of the fractal. Select a color palette from the UI to see how it affects the visualization. This can highlight different features and make the fractal exploration more engaging.
