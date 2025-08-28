@@ -83,17 +83,48 @@ Fractals have practical applications in many fields, including computer graphics
 
 ### Output Quality and UI Responsiveness
 
-The **OutputQuality** setting has a significant impact on the responsiveness of the UI and the speed at which fractal images are generated:
+The **Output Quality** dropdown in the UI lets you select the resolution and detail level for the generated fractal image. Each option sets the image size as follows:
 
-- **Fast** and **Medium** quality settings produce images quickly, allowing for smooth navigation and rapid exploration of fractals. These are recommended for slower machines or when you want to quickly zoom and pan through the fractal space.
-- **High** and **Extreme** quality settings generate more detailed and visually rich images, but require much more processing time. Even on fast machines, rendering at these levels can take several seconds or more, especially at high zoom levels or with large image sizes.
+| Option        | Resolution (Width x Height) |
+|---------------|----------------------------|
+| Fast          | 300 x 200                  |
+| Medium        | 900 x 600                  |
+| FHD           | 1920 x 1080                |
+| QHD           | 2560 x 1440                |
+| High Quality  | 2400 x 1600                |
+| Superb        | 3000 x 2000                |
+| Ridiculous    | 6000 x 4000                |
+| Ludicrous     | 12000 x 8000               |
+| Plaid         | 24000 x 16000              |
 
-**Tips:**
+- **Fast**: Quick preview, low resolution.
+- **Medium**: 3x the base size.
+- **FHD**: Standard Full HD (1920x1080).
+- **QHD**: Quad HD (2560x1440).
+- **High Quality**: 8x the base size.
+- **Superb**: 10x the base size.
+- **Ridiculous**: 20x the base size.
+- **Ludicrous**: 40x the base size.
+- **Plaid**: 80x the base size (extremely large, for maximum detail).
 
-- On slower computers, use Fast or Medium quality to navigate, then switch to a higher quality for your final image.
-- On powerful hardware, you can use higher quality settings more often, but expect some delay at the most detailed levels.
+> Note: Higher quality settings will take longer to render and require more memory and processing power.
 
 In general, increasing OutputQuality increases the number of iterations and the resolution of the image, which directly affects how long it takes to process and display the fractal.
+
+#### Processing Time Comparison: Fast/Medium vs. High Resolutions
+
+On a typical mid-range laptop, the difference in processing time between lower and higher Output Quality settings is dramatic:
+
+- **Fast (300x200):** ~250–500 milliseconds
+- **Medium (900x600):** ~1–2 seconds (estimated)
+- **High Quality (2400x1600):** ~1–1.5 seconds
+- **Extreme/Very High (9000x6000):** 27–40 seconds or more
+
+**Summary:**
+
+- The Fast and Medium settings provide near-instant feedback, making them ideal for interactive exploration and clicking around the fractal.
+- The highest quality settings (Extreme, Ridiculous, Ludicrous, Plaid) can take tens of seconds to render a single image. These are best reserved for final renders, not for interactive use.
+- For a smooth and responsive UI, use Fast or Medium while exploring, and only switch to higher resolutions when you are ready to save or export a detailed image.
 
 ### Saving Images and Description Files
 
@@ -119,6 +150,12 @@ Upon launching the application, you will see options to select the type of fract
 ### Adjusting Parameters Manually
 
 You can also fine-tune the fractal by entering values directly into the parameter fields in the UI. These fields may include zoom level, position (X/Y), iteration count, and color settings. After adjusting the numbers, press Enter or click the update button to refresh the image with the new parameters.
+
+### UI Button Functions
+
+- **Apply:** Applies the current settings and generates a new fractal image based on the selected parameters (fractal type, zoom, color wheel, etc.). Use this button after changing any settings to update the display.
+- **Reset:** Restores the position and zoom parameters to their default values, allowing you to quickly return to the initial view of a Fractal (in case you get lost or wish to start a new exploration from scratch).
+- **Save:** Opens a dialog to save the currently displayed fractal image to your computer. This also saves a corresponding parameters JSON file, so you can reproduce or share the exact same fractal view later.
 
 ### Color Wheels and Visualization
 
@@ -222,7 +259,7 @@ This project is split into two main components:
 
 - **Frontend (`tfrewin.play.fractal.avalonia`)**: Provides the interactive user interface, allowing users to select fractal types, zoom, adjust parameters, and visualize the results. The frontend communicates with the backend to request fractal data and then renders the resulting images for the user. It is built with Avalonia for cross-platform desktop support.
 
-#### Component Interaction Diagram (of sorts)
+#### Component Interaction Diagram
 
 ```mermaid
 flowchart LR
