@@ -1,0 +1,53 @@
+{
+  "StartTime": "2025-09-01T14:12:33.0611Z",
+  "ProcessingMilliseconds": 1378,
+  "PaintMilliseconds": 83,
+  "SetName": "Julia",
+  "PlaneWidth": 1920,
+  "PlaneHeight": 1080,
+  "Zoom": 1024,
+  "MoveX": -0.487835916263333,
+  "MoveY": 0.138500967622992,
+  "IterationFactor": 1,
+  "ColourWheelName": "Generated",
+  "ColourOffset": 0,
+  "ImageFilenames": [],
+  "MatrixExtents": {
+    "TopLeftExtent": {
+      "Item1": -0.489300760013333,
+      "Item2": 0.137524405122992
+    },
+    "TopMiddleExtent": {
+      "Item1": -0.487835916263333,
+      "Item2": 0.137524405122992
+    },
+    "TopRightExtent": {
+      "Item1": -0.48637259839223923,
+      "Item2": 0.137524405122992
+    },
+    "MiddleLeftExtent": {
+      "Item1": -0.489300760013333,
+      "Item2": 0.138500967622992
+    },
+    "MiddleMiddleExtent": {
+      "Item1": -0.487835916263333,
+      "Item2": 0.138500967622992
+    },
+    "MiddleRightExtent": {
+      "Item1": -0.48637259839223923,
+      "Item2": 0.138500967622992
+    },
+    "BottomLeftExtent": {
+      "Item1": -0.489300760013333,
+      "Item2": 0.13947572167391792
+    },
+    "BottomMiddleExtent": {
+      "Item1": -0.487835916263333,
+      "Item2": 0.13947572167391792
+    },
+    "BottomRightExtent": {
+      "Item1": -0.48637259839223923,
+      "Item2": 0.13947572167391792
+    }
+  }
+}

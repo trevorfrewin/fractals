@@ -1,0 +1,53 @@
+{
+  "StartTime": "2025-09-01T14:08:00.9977126Z",
+  "ProcessingMilliseconds": 1278,
+  "PaintMilliseconds": 247,
+  "SetName": "Mandelbrot",
+  "PlaneWidth": 1920,
+  "PlaneHeight": 1080,
+  "Zoom": 1,
+  "MoveX": 0,
+  "MoveY": 0,
+  "IterationFactor": 1,
+  "ColourWheelName": "Generated",
+  "ColourOffset": 0,
+  "ImageFilenames": [],
+  "MatrixExtents": {
+    "TopLeftExtent": {
+      "Item1": -3.555555555555556,
+      "Item2": 2
+    },
+    "TopMiddleExtent": {
+      "Item1": 0,
+      "Item2": 2
+    },
+    "TopRightExtent": {
+      "Item1": 3.551851851851852,
+      "Item2": 2
+    },
+    "MiddleLeftExtent": {
+      "Item1": -3.555555555555556,
+      "Item2": 0
+    },
+    "MiddleMiddleExtent": {
+      "Item1": 0,
+      "Item2": 0
+    },
+    "MiddleRightExtent": {
+      "Item1": 3.551851851851852,
+      "Item2": 0
+    },
+    "BottomLeftExtent": {
+      "Item1": -3.555555555555556,
+      "Item2": -1.9962962962962965
+    },
+    "BottomMiddleExtent": {
+      "Item1": 0,
+      "Item2": -1.9962962962962965
+    },
+    "BottomRightExtent": {
+      "Item1": 3.551851851851852,
+      "Item2": -1.9962962962962965
+    }
+  }
+}

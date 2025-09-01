@@ -8,6 +8,7 @@
   - [Going Deeply into Sets](#going-deeply-into-sets)
     - [Mandelbrot Set](#mandelbrot-set)
     - [Julia Set](#julia-set)
+  - [Push the Limits: Exploring Far Beyond the Examples](#push-the-limits-exploring-far-beyond-the-examples)
   - [Fractals in Nature and Science](#fractals-in-nature-and-science)
   - [Iteration, Zoom, and Infinite Detail](#iteration-zoom-and-infinite-detail)
   - [Coloring and Visualization](#coloring-and-visualization)
@@ -15,10 +16,12 @@
   - [Further Reading](#further-reading)
 - [This play set](#this-play-set)
   - [Output Quality and UI Responsiveness](#output-quality-and-ui-responsiveness)
+    - [Processing Time Comparison: Fast/Medium vs. High Resolutions](#processing-time-comparison-fastmedium-vs-high-resolutions)
   - [Saving Images and Description Files](#saving-images-and-description-files)
   - [Selecting the Fractal Type](#selecting-the-fractal-type)
   - [Zooming In and Out](#zooming-in-and-out)
   - [Adjusting Parameters Manually](#adjusting-parameters-manually)
+  - [UI Button Functions](#ui-button-functions)
   - [Color Wheels and Visualization](#color-wheels-and-visualization)
 - [Compiling and Running this Code](#compiling-and-running-this-code)
   - [Prerequisites](#prerequisites)
@@ -53,9 +56,33 @@ Fractals are often visualized on the Cartesian plane, where each point (x, y) is
 
 The Mandelbrot set is perhaps the most famous fractal. It is defined by iterating the function `z = z^2 + c`, where both z and c are complex numbers, and starting with z = 0. For each point c on the complex plane, the function is iterated repeatedly. If the magnitude of z remains bounded (does not go to infinity) after many iterations, the point is considered part of the Mandelbrot set and is colored accordingly. The boundary of the Mandelbrot set reveals an infinitely complex, self-similar structure.
 
+The Mandelbrot set reveals increasing complexity as you zoom in. Below are three stages of the Mandelbrot set at FHD (1920x1080) resolution:
+
+| Stage 1: Full Set | Stage 2: Zoomed In | Stage 3: Deep Zoom |
+|:-----------------:|:------------------:|:------------------:|
+| ![Mandelbrot Stage 1](images/mandelbrot_stage1.png) | ![Mandelbrot Stage 2](images/mandelbrot_stage2.png) | ![Mandelbrot Stage 3](images/mandelbrot_stage3.png) |
+
 #### Julia Set
 
 Julia sets are closely related to the Mandelbrot set but differ in that the value of c is fixed and z starts at each point on the plane. The resulting patterns can be connected or disconnected, depending on the value of c. Julia sets can be thought of as slices through the parameter space of the Mandelbrot set, and exploring them reveals a vast variety of shapes and structures.
+
+Julia sets offer a wide variety of shapes depending on the parameter `c`. Here are three stages of a Julia set at FHD resolution:
+
+| Stage 1: Full Set | Stage 2: Zoomed In | Stage 3: Deep Zoom |
+|:-----------------:|:------------------:|:------------------:|
+| ![Julia Stage 1](images/julia_stage1.png) | ![Julia Stage 2](images/julia_stage2.png) | ![Julia Stage 3](images/julia_stage3.png) |
+
+These images highlight the diversity and beauty of Julia sets as you explore deeper.
+
+### Push the Limits: Exploring Far Beyond the Examples
+
+While the images above showcase just a glimpse of what’s possible, your exploration doesn’t have to stop there! Here are some key points to keep in mind as you dive deeper:
+
+- **All images were generated at 1920x1080 (FHD)** using the Avalonia-based fractal explorer and the built-in color wheel. Higher resolutions provide even more detail for your discoveries.
+- **Full details (zoom, position, etc.) for each image** can be found in the matching `<name>parameters.json` file in the `/images/` folder. Use these files to revisit or share exact fractal views.
+- **Zoom levels in these samples are relatively modest** (in the range of <10,000×), but you can zoom in to nearly 10¹⁵× before 64-bit floating point calculations start to lose accuracy. The only real limit is your curiosity (and your computer’s power)!
+
+---
 
 ### Fractals in Nature and Science
 
