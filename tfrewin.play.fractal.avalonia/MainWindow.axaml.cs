@@ -52,8 +52,66 @@ public partial class MainWindow : Window
 
         ApplyButton.Click += ApplyButton_Click;
         ResetButton.Click += ResetButton_Click;
+        ImportButton.Click += ImportButton_Click;
         SaveButton.Click += SaveButton_Click;
         FractalImage.PointerPressed += FractalImage_PointerPressed;
+    }
+
+    private async void ImportButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var options = new Avalonia.Platform.Storage.FilePickerOpenOptions
+        {
+            Title = "Import Fractal Parameters",
+            AllowMultiple = false,
+            FileTypeFilter = new List<Avalonia.Platform.Storage.FilePickerFileType>
+            {
+                new Avalonia.Platform.Storage.FilePickerFileType("Parameter Files") { Patterns = new[] { "*.parameters.json" } },
+                new Avalonia.Platform.Storage.FilePickerFileType("JSON Files") { Patterns = new[] { "*.json" } }
+            }
+        };
+
+        var files = await this.StorageProvider.OpenFilePickerAsync(options);
+        if (files == null || files.Count == 0)
+            return;
+
+        var file = files[0];
+        var filePath = file.Path.LocalPath;
+        if (!File.Exists(filePath))
+            return;
+
+        try
+        {
+            var json = await File.ReadAllTextAsync(filePath);
+            var parameters = JsonSerializer.Deserialize<ImageParameters>(json);
+
+            if (parameters != null)
+            {
+                ZoomBox.Value = (decimal?)parameters.Zoom;
+                MoveXBox.Value = (decimal?)parameters.MoveX;
+                MoveYBox.Value = (decimal?)parameters.MoveY;
+
+                // Set ComboBoxes by value
+                SetNameBox.SelectedItem = parameters.SetName;
+                OutputQualityBox.SelectedItem = $"{parameters.PlaneWidth}x{parameters.PlaneHeight}";
+                ColourWheelBox.SelectedItem = parameters.ColourWheelName;
+
+                IterationFactorBox.Value = (decimal?)parameters.IterationFactor;
+
+                // Click Apply
+                ApplyButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            }
+        }
+        catch (Exception ex)
+        {
+            var msgBox = new Window
+            {
+                Title = "Error",
+                Width = 300,
+                Height = 100,
+                Content = new TextBlock { Text = $"Failed to import parameters:\n{ex.Message}", VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center }
+            };
+            await msgBox.ShowDialog(this);
+        }
     }
 
     private async void ApplyButton_Click(object? sender, RoutedEventArgs e)
@@ -61,6 +119,7 @@ public partial class MainWindow : Window
         ProgressBar.IsVisible = true;
         ApplyButton.IsEnabled = false;
         ResetButton.IsEnabled = false;
+        ImportButton.IsEnabled = false;
         SaveButton.IsEnabled = false;
         await Task.Delay(100); // UI update
 
@@ -110,6 +169,7 @@ public partial class MainWindow : Window
         ProgressBar.IsVisible = false;
         ApplyButton.IsEnabled = true;
         ResetButton.IsEnabled = true;
+        ImportButton.IsEnabled = true;
         SaveButton.IsEnabled = true;
     }
 
@@ -119,6 +179,7 @@ public partial class MainWindow : Window
         MoveXBox.Value = 0;
         MoveYBox.Value = 0;
         OutputQualityBox.SelectedIndex = 0;
+        IterationFactorBox.Value = 1;
         ApplyButton_Click(this, new RoutedEventArgs());
     }
 
