@@ -4,7 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="tfrewin.play.fractal.avalonia.MainWindow"
-        Title="Fractal Play Place">
+        Title="Fractal Play Place"
+        Icon="resm:tfrewin.play.fractal.avalonia.assets.application_icon.png?assembly=tfrewin.play.fractal.avalonia">
     <Grid ColumnDefinitions="Auto,*" RowDefinitions="*">
         <!-- Controls Panel -->
         <StackPanel Grid.Column="0" Margin="16" Width="350" Spacing="12">
