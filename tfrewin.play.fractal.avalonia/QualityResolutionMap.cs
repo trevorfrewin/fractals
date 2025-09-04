@@ -8,6 +8,7 @@ namespace tfrewin.play.fractal.avalonia
         private static readonly List<(string Name, int Width, int Height)> _map = new()
         {
             ("Fast", 300, 200),
+            ("Icon", 256, 256),
             ("Medium", 900, 600),
             ("FHD", 1920, 1080),
             ("Portrait-FHD", 1080, 1920),
