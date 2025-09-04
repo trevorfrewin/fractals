@@ -44,7 +44,7 @@ public partial class MainWindow : Window
         SetNameBox.ItemsSource = new List<string> { "Mandelbrot", "Julia" };
         SetNameBox.SelectedIndex = 0;
 
-        OutputQualityBox.ItemsSource = new List<string> { "Fast", "Medium", "FHD", "QHD", "High Quality", "Superb", "Ridiculous", "Ludicrous", "Plaid" };
+        OutputQualityBox.ItemsSource = QualityResolutionMap.GetAllQualityNames();
         OutputQualityBox.SelectedIndex = 0;
 
         OutputTypeBox.ItemsSource = new List<string> { "JPG", "PNG" };
@@ -100,6 +100,30 @@ public partial class MainWindow : Window
                 var qualityName = QualityResolutionMap.GetQualityName(parameters.PlaneWidth, parameters.PlaneHeight);
                 if (qualityName != null)
                     OutputQualityBox.SelectedItem = qualityName;
+
+                // Determine OutputType from the portion of the filename immediately before ".parameters.json"
+                var fileName = Path.GetFileName(filePath);
+                string outputTypeFromExtension = "JPG"; // Default
+
+                var suffixIndex = fileName.LastIndexOf(".parameters.json", StringComparison.OrdinalIgnoreCase);
+                if (suffixIndex > 0)
+                {
+                    var baseName = fileName.Substring(0, suffixIndex);
+                    var ext = Path.GetExtension(baseName).ToLower();
+                    outputTypeFromExtension = ext switch
+                    {
+                        ".png" => "PNG",
+                        ".jpg" => "JPG",
+                        ".jpeg" => "JPG",
+                        _ => "JPG"
+                    };
+                }
+
+                var outputTypeMatch = OutputTypeBox.ItemsSource?
+                    .OfType<string>()
+                    .FirstOrDefault(x => string.Equals(x, outputTypeFromExtension, StringComparison.OrdinalIgnoreCase));
+                if (outputTypeMatch != null)
+                    OutputTypeBox.SelectedItem = outputTypeMatch;
 
                 // Click Apply
                 ApplyButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
