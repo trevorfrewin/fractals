@@ -97,6 +97,10 @@ public partial class MainWindow : Window
 
                 IterationFactorBox.Value = (decimal?)parameters.IterationFactor;
 
+                var qualityName = QualityResolutionMap.GetQualityName(parameters.PlaneWidth, parameters.PlaneHeight);
+                if (qualityName != null)
+                    OutputQualityBox.SelectedItem = qualityName;
+
                 // Click Apply
                 ApplyButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
             }
@@ -123,19 +127,10 @@ public partial class MainWindow : Window
         SaveButton.IsEnabled = false;
         await Task.Delay(100); // UI update
 
-        int planeWidth = 300, planeHeight = 200;
-        switch (OutputQualityBox.SelectedItem)
-        {
-            case "Fast": break;
-            case "Medium": planeWidth *= 3; planeHeight *= 3; break;
-            case "FHD": planeWidth = 1920; planeHeight = 1080; break;
-            case "QHD": planeWidth = 2560; planeHeight = 1440; break;
-            case "High Quality": planeWidth *= 8; planeHeight *= 8; break;
-            case "Superb": planeWidth *= 10; planeHeight *= 10; break;
-            case "Ridiculous": planeWidth *= 20; planeHeight *= 20; break;
-            case "Ludicrous": planeWidth *= 40; planeHeight *= 40; break;
-            case "Plaid": planeWidth *= 80; planeHeight *= 80; break;
-        }
+        var selectedQuality = OutputQualityBox.SelectedItem?.ToString() ?? "Fast";
+        var selectedResolution = QualityResolutionMap.GetResolution(selectedQuality) ?? (300, 200);
+        int planeWidth = selectedResolution.Width;
+        int planeHeight = selectedResolution.Height;
 
         var parameters = new ImageParameters(
             DateTime.UtcNow,
