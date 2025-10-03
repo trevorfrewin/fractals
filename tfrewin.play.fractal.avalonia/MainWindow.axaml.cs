@@ -257,6 +257,40 @@ public partial class MainWindow : Window
             var parametersJSON = JsonSerializer.Serialize(this._imageParameters, serializeOptions);
             File.WriteAllText(filePath + ".parameters.json", parametersJSON);
 
+            var colourCounts = new Dictionary<string, int>();
+            var uniqueColours = new HashSet<string>();
+
+            if (_image != null)
+            {
+                for (int y = 0; y < _image.Height; y++)
+                {
+                    for (int x = 0; x < _image.Width; x++)
+                    {
+                        Rgba32 pixel = Color.Aqua; // _image[x, y];
+                        string hex = $"#{pixel.R:X2}{pixel.G:X2}{pixel.B:X2}{pixel.A:X2}";
+                        uniqueColours.Add(hex);
+
+                        if (colourCounts.ContainsKey(hex))
+                            colourCounts[hex]++;
+                        else
+                            colourCounts[hex] = 1;
+                    }
+                }
+            }
+
+            var paletteDescription = new PaletteDescription
+            {
+                ColourPalette = uniqueColours.ToList(),
+                WeightedColourPalette = colourCounts
+                    .OrderByDescending(kvp => kvp.Value)
+                    .Select(kvp => new tfrewin.play.fractal.avalonia.WeightedColour { Colour = kvp.Key, Count = kvp.Value })
+                    .ToList()
+            };
+
+            var paletteJson = JsonSerializer.Serialize(paletteDescription, new JsonSerializerOptions { WriteIndented = true });
+            var paletteFilePath = Path.ChangeExtension(filePath, ".palette.json");
+            File.WriteAllText(paletteFilePath, paletteJson);
+
             var msgBox = new Window
             {
                 Title = "Closes in 15 seconds",
@@ -305,16 +339,17 @@ public partial class MainWindow : Window
             var zoomAmount = ZoomBox.Value ?? 1;
             var moveXAmount = MoveXBox.Value ?? 0;
             var moveYAmount = MoveYBox.Value ?? 0;
+            double zoomAdjustment = ZoomAdjustmentSlider?.Value ?? 2.0;
 
             // Mouse button logic
             var props = e.GetCurrentPoint(FractalImage);
             if (props.Properties.IsLeftButtonPressed)
             {
-                zoomAmount *= 2;
+                zoomAmount *= (decimal)zoomAdjustment;
             }
             else if (props.Properties.IsRightButtonPressed)
             {
-                zoomAmount /= 2;
+                zoomAmount /= (decimal)zoomAdjustment;
             }
             ZoomBox.Value = zoomAmount;
 
