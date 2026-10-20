@@ -262,11 +262,12 @@ public partial class MainWindow : Window
 
             if (_image != null)
             {
-                for (int y = 0; y < _image.Height; y++)
+                using var rgbaImage = _image.CloneAs<Rgba32>();
+                for (int y = 0; y < rgbaImage.Height; y++)
                 {
-                    for (int x = 0; x < _image.Width; x++)
+                    for (int x = 0; x < rgbaImage.Width; x++)
                     {
-                        Rgba32 pixel = Color.Aqua; // _image[x, y];
+                        Rgba32 pixel = rgbaImage[x, y];
                         string hex = $"#{pixel.R:X2}{pixel.G:X2}{pixel.B:X2}{pixel.A:X2}";
                         uniqueColours.Add(hex);
 
