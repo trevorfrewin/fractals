@@ -306,3 +306,7 @@ Params --[User Actions]--> UI
 - The frontend collects user input and displays images.
 - The backend performs all heavy computation and returns data to the frontend.
 - This separation allows for flexible use, testing, and future expansion (e.g., web or CLI frontends).
+
+## License
+
+This project is licensed under the GNU General Public License v3.0. See [LICENSE](LICENSE) for the full license text.
