@@ -157,7 +157,7 @@ namespace tfrewin.play.fractal.start
             original.Mutate(x => x.DrawText(
                 annotations,
                 font,
-                new Color(Rgba32.ParseHex("#06121DFF")),
+                Color.Black,
                 new PointF(original.Width - rect.Width - TextPadding,
                         original.Height - rect.Height - TextPadding)));
 
@@ -173,7 +173,7 @@ namespace tfrewin.play.fractal.start
                 original.Mutate(x => x.DrawText(
                     sizeSummaryText,
                     font,
-                    new Color(Rgba32.ParseHex("#06121DFF")),
+                    Color.Black,
                     new PointF(TextPadding, TextPadding)));
             }
         }
