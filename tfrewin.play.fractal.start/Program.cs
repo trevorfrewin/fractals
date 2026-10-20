@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Fractal explorer
+// Copyright (C) 2025 Trevor Frewin
+// SPDX-License-Identifier: GPL-3.0-only
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;

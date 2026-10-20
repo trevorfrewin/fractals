@@ -1,3 +1,7 @@
+// Fractal explorer
+// Copyright (C) 2025 Trevor Frewin
+// SPDX-License-Identifier: GPL-3.0-only
+
 using System;
 using System.Threading.Tasks;
 using tfrewin.play.fractal.start.processor.output;
